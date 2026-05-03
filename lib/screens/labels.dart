@@ -1,0 +1,150 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
+import '../data/robot_status_model.dart';
+
+@Preview(name: "Text Label")
+Widget textLabel() {
+  return TextLabel(text: 'Test');
+}
+
+@Preview(name: "Connection Label")
+Widget connectionLabel() {
+  return ConnectionStatusLabel(status: RobotConnectionStatus.disconnected);
+}
+
+@Preview(name: "Autonomy Status Label")
+Widget autonomyStatusLabel() {
+  return AutonomyStatusLabel(status: AutonomyStatus.manual);
+}
+
+@Preview(name: 'Battery State Label' )
+Widget batteryStateLabel() {
+  return BatteryStateLabel(state: BatteryState(percentage: .0));
+}
+
+class TextLabel extends StatelessWidget {
+  const TextLabel({
+    required this.text,
+    this.color,
+    this.style,
+    super.key
+  });
+
+  final String text;
+  final Color? color;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0, bottom: 4.0),
+      decoration: ShapeDecoration(
+        color: color ?? Colors.blue,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(12.0))
+        )
+      ),
+      child: Text(text, style: style)
+    );
+  }
+}
+
+class IconLabel extends StatelessWidget {
+  const IconLabel({
+    required this.icon,
+    required this.text,
+    this.iconRotations = 0,
+    this.style,
+    super.key
+  });
+
+  final IconData icon;
+  final int iconRotations;
+  final String text;
+  final TextStyle? style;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 4.0,
+      children: [
+        Text(text, style: style),
+        RotatedBox(
+          quarterTurns: iconRotations,
+          child: Icon(icon),
+        )
+      ],
+    );
+  }
+}
+
+class ConnectionStatusLabel extends TextLabel {
+  ConnectionStatusLabel({
+    required this.status,
+    super.style,
+    super.key
+  }) : super(
+    text: status.label,
+    color: switch (status) {
+      RobotConnectionStatus.disconnected => Colors.red,
+      RobotConnectionStatus.connected => Colors.green,
+      _ => Colors.grey
+    }
+  );
+
+  final RobotConnectionStatus status;
+}
+
+class AutonomyStatusLabel extends TextLabel {
+  AutonomyStatusLabel({
+    required this.status,
+    super.style,
+    super.key
+  }) : super(
+    text: status.label,
+    color: switch (status) {
+      AutonomyStatus.manual => Colors.orange,
+      AutonomyStatus.idle => Colors.blue,
+      AutonomyStatus.auto => Colors.green,
+      _ => Colors.grey,
+    }
+  );
+
+  final AutonomyStatus status;
+}
+
+class LocationLabel extends TextLabel {
+  LocationLabel({
+    required this.locationData,
+    super.style,
+    super.key
+  }) : super(
+    text: '${locationData.posX}, ${locationData.posY}, ${locationData.yaw()}',
+    color: Colors.grey.shade100
+  );
+
+  final LocationData locationData;
+}
+
+class BatteryStateLabel extends IconLabel {
+  BatteryStateLabel({
+    required this.state,
+    super.iconRotations = 1,
+    super.style,
+    super.key
+  }) : super(
+    icon: switch (state.percentage) {
+      < 10.0 => Icons.battery_0_bar,
+      < 20.0 => Icons.battery_1_bar,
+      < 30.0 => Icons.battery_2_bar,
+      < 50.0 => Icons.battery_3_bar,
+      < 70.0 => Icons.battery_4_bar,
+      < 80.0 => Icons.battery_5_bar,
+      < 90.0 => Icons.battery_6_bar,
+      _ => Icons.battery_full
+    },
+    text: '${state.percentage} %'
+  );
+
+  final BatteryState state;
+}
