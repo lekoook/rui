@@ -1,10 +1,9 @@
+import 'labels.dart';
+import 'map_display.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/robot_status_model.dart';
-
-import 'map_display.dart';
-import 'package:flutter/material.dart';
+import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'robot_status_panel.dart';
-import 'labels.dart';
 
 @Preview(name: 'Robot Dashboard')
 Widget robotDashboard() {
@@ -12,22 +11,51 @@ Widget robotDashboard() {
   return RobotDashboard(robotStatusViewModel: vm);
 }
 
-class RobotMainView extends StatelessWidget {
-  RobotMainView({super.key}) :
-    _robotStatusViewModel = RobotStatusViewModel();
+class RobotMainView extends StatefulWidget {
+  const RobotMainView({super.key});
 
-  final RobotStatusViewModel _robotStatusViewModel;
+  @override
+  State<StatefulWidget> createState() => _RobotMainView();
+}
+
+class _RobotMainView extends State<RobotMainView> {
+  final RobotStatusViewModel _robotStatusViewModel = RobotStatusViewModel();
+  int _tabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
+    return Scaffold(
+      headers: [
         RobotHeaderView(robotStatusViewModel: _robotStatusViewModel),
-        Divider(indent: 4.0, endIndent: 4.0,),
-        Expanded(
-          child: RobotDashboard(robotStatusViewModel: _robotStatusViewModel)
-        )
+        Divider()
       ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TabList(
+            index: _tabIndex,
+            onChanged: (value) {
+              setState(() {
+                _tabIndex = value;
+              });
+            },
+            children: [
+              TabItem(child: TextWithIcon.iconData(text: 'Dashboard', iconData: Icons.dashboard)),
+              TabItem(child: TextWithIcon.iconData(text: 'Waypoints', iconData: Icons.route)),
+              TabItem(child: TextWithIcon.iconData(text: 'Map', iconData: Icons.map))
+            ],
+          ),
+          const Gap(8),
+          Expanded(
+              child: IndexedStack(
+              index: _tabIndex,
+              children: [
+                RobotDashboard(robotStatusViewModel: _robotStatusViewModel)
+              ],
+            ),
+          )
+        ],
+      )
     );
   }
 }
@@ -39,40 +67,37 @@ class RobotHeaderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 8.0, right: 8.0),
-      child: Row(
-        spacing: 16.0,
-        children: [
-          Icon(
-            Icons.computer,
-            color: Colors.black,
-            size: 48.0,
-            semanticLabel: "App icon.",
-          ),
-          Expanded(
-            child: Text('Robot Command & Control', style: TextStyle(fontSize: 36.0))
-          ),
-          ValueListenableBuilder<RobotConnectionStatus>(
-            valueListenable: robotStatusViewModel.connectionNotifier,
-            builder: (context, connection, child) {
-              return ConnectionStatusLabel(status: connection);
-            }
-          ),
-          ValueListenableBuilder<BatteryState>(
-            valueListenable: robotStatusViewModel.batteryStateNotifier,
-            builder: (context, battery, child) {
-              return BatteryStateLabel(state: battery);
-            }
-          ),
-          ValueListenableBuilder<AutonomyStatus>(
-            valueListenable: robotStatusViewModel.autonomyNotifier,
-            builder: (context, autonomy, child) {
-              return AutonomyStatusLabel(status: autonomy);
-            }
-          )
-        ]
-      ),
+    return AppBar(
+      title: Text('RUI'),
+      subtitle: Text('Robot Command & Control Interface'),
+      leading: [
+        Icon(
+          Icons.computer,
+          color: Colors.cyan,
+          size: 48.0,
+          semanticLabel: "App icon.",
+        )
+      ],
+      trailing: [
+        ValueListenableBuilder<RobotConnectionStatus>(
+          valueListenable: robotStatusViewModel.connectionNotifier,
+          builder: (context, connection, child) {
+            return ConnectionStatusLabel(status: connection);
+          }
+        ),
+        ValueListenableBuilder<BatteryState>(
+          valueListenable: robotStatusViewModel.batteryStateNotifier,
+          builder: (context, battery, child) {
+            return BatteryStateLabel(state: battery);
+          }
+        ),
+        ValueListenableBuilder<AutonomyStatus>(
+          valueListenable: robotStatusViewModel.autonomyNotifier,
+          builder: (context, autonomy, child) {
+            return AutonomyStatusLabel(status: autonomy);
+          }
+        )
+      ],
     );
   }
 }

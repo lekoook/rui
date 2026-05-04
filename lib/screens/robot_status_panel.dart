@@ -1,6 +1,6 @@
 import '../data/robot_status_model.dart';
 import 'labels.dart';
-import 'package:flutter/material.dart';
+import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'package:flutter/widget_previews.dart';
 
 @Preview(name: "Robot Status Panel")
@@ -28,7 +28,7 @@ class RobotStatusPanel extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: Text('Robot Status'),
           ),
-          Divider(color: Colors.grey, thickness: 1.0, height: 1.0, indent: 8.0, endIndent: 8.0),
+          Divider(thickness: 1.0, height: 1.0, indent: 8.0, endIndent: 8.0),
           FieldRow(
             iconData: Icons.wifi,
             name: 'Connection',
@@ -94,9 +94,8 @@ class FieldRow extends StatelessWidget {
       child: Row(
       spacing: 8.0,
       children: [
-        Icon(iconData),
         Expanded(
-          child: Text(name)
+          child: TextWithIcon(text: name, icon: Icon(iconData)),
         ),
         Align(
           alignment: Alignment.centerRight,

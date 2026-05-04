@@ -2,24 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import '../data/robot_status_model.dart';
 
-@Preview(name: "Text Label")
+@Preview(name: "Text Label", group: 'Labels')
 Widget textLabel() {
   return TextLabel(text: 'Test');
 }
 
-@Preview(name: "Connection Label")
+@Preview(name: "Connection Label", group: 'Labels')
 Widget connectionLabel() {
   return ConnectionStatusLabel(status: RobotConnectionStatus.disconnected);
 }
 
-@Preview(name: "Autonomy Status Label")
+@Preview(name: "Autonomy Status Label", group: 'Labels')
 Widget autonomyStatusLabel() {
   return AutonomyStatusLabel(status: AutonomyStatus.manual);
 }
 
-@Preview(name: 'Battery State Label' )
+@Preview(name: 'Battery State Label', group: 'Labels')
 Widget batteryStateLabel() {
   return BatteryStateLabel(state: BatteryState(percentage: .0));
+}
+
+@Preview(name: 'Text With Icon', group: 'TextWithIcon')
+Widget textWithIcon() {
+  return TextWithIcon(text: 'Location', icon: Icon(Icons.my_location));
 }
 
 class TextLabel extends StatelessWidget {
@@ -120,7 +125,7 @@ class LocationLabel extends TextLabel {
     super.key
   }) : super(
     text: '${locationData.posX}, ${locationData.posY}, ${locationData.yaw()}',
-    color: Colors.grey.shade100
+    color: Colors.transparent
   );
 
   final LocationData locationData;
@@ -147,4 +152,34 @@ class BatteryStateLabel extends IconLabel {
   );
 
   final BatteryState state;
+}
+
+class TextWithIcon extends StatelessWidget {
+  const TextWithIcon({
+    required this.text,
+    this.style,
+    required this.icon,
+    super.key
+  });
+  TextWithIcon.iconData({
+    required this.text,
+    this.style,
+    required IconData iconData,
+    super.key
+  }) : icon = Icon(iconData);
+
+  final String text;
+  final TextStyle? style;
+  final Icon icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 8.0,
+      children: [
+        icon,
+        Text(text)
+      ],
+    );
+  }
 }
