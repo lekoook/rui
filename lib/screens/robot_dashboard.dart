@@ -50,7 +50,9 @@ class _RobotMainView extends State<RobotMainView> {
               child: IndexedStack(
               index: _tabIndex,
               children: [
-                RobotDashboard(robotStatusViewModel: _robotStatusViewModel)
+                RobotDashboard(robotStatusViewModel: _robotStatusViewModel),
+                RobotWaypoints(),
+                RobotMaps()
               ],
             ),
           )
@@ -117,6 +119,28 @@ class RobotDashboard extends StatelessWidget {
         ),
         RobotStatusPanel(robotStatusViewModel: robotStatusViewModel),
       ],
+    );
+  }
+}
+
+class RobotWaypoints extends StatelessWidget {
+  const RobotWaypoints({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Waypoints View')
+    );
+  }
+}
+
+class RobotMaps extends StatelessWidget {
+  const RobotMaps({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text('Maps View')
     );
   }
 }
