@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
-import '../data/robot_status_model.dart';
+import 'package:rui/data/data_types.dart';
 
 @Preview(name: "Text Label", group: 'Labels')
 Widget textLabel() {

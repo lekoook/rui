@@ -1,5 +1,5 @@
+import 'package:rui/screens/robot_view.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
-import 'screens/robot_dashboard.dart';
 
 void main() {
   runApp(const MainApp());

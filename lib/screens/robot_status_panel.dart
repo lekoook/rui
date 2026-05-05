@@ -1,11 +1,14 @@
-import '../data/robot_status_model.dart';
-import 'labels.dart';
-import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:rui/data/data_types.dart';
+import 'package:rui/data/robot_model.dart';
+import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/screens/labels.dart';
+import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 @Preview(name: "Robot Status Panel")
 Widget robotStatusPanel() {
-  RobotStatusViewModel vm = RobotStatusViewModel();
+  final rm = RobotModel();
+  final vm = RobotStatusViewModel(robotModel: rm);
   vm.connectionNotifier.value = RobotConnectionStatus.connected;
   vm.autonomyNotifier.value = AutonomyStatus.idle;
   vm.batteryStateNotifier.value = BatteryState(percentage: 47.0);

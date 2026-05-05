@@ -1,20 +1,21 @@
-import '../data/robot_status_model.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:rui/data/data_types.dart';
+import 'package:rui/data/robot_model.dart';
+import 'package:rui/data/robot_status_view_model.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 @Preview(name: 'Map Display')
 Widget mapDisplay() {
-  RobotStatusViewModel vm = RobotStatusViewModel();
-  return MapDisplay(robotStatusViewModel: vm);
+  final rm = RobotModel();
+  final vm = RobotStatusViewModel(robotModel: rm);
+  return MapDisplay(mapData: vm.currentMapNotifier.value);
 }
 
 class MapPainter extends CustomPainter {
-  MapPainter({
-    required this.mapImage
-  });
+  MapPainter({required this.mapImage});
 
   final ui.Image? mapImage;
 
@@ -39,17 +40,15 @@ class MapPainter extends CustomPainter {
 }
 
 class MapDisplay extends StatefulWidget {
-  const MapDisplay({required this.robotStatusViewModel, super.key});
+  const MapDisplay({required this.mapData, super.key});
 
-  final RobotStatusViewModel robotStatusViewModel;
+  final MapData mapData;
 
   @override
   State<MapDisplay> createState() => _MapDisplayState();
 }
 
 class _MapDisplayState extends State<MapDisplay> {
-  RobotStatusViewModel get robotStatusViewModel => widget.robotStatusViewModel;
-
   final _controller = TransformationController();
 
   void _reset() {
@@ -63,35 +62,39 @@ class _MapDisplayState extends State<MapDisplay> {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: widget.robotStatusViewModel.currentMapNotifier,
-      builder: (context, map, child) {
-        return Stack(
-          children: [
-            Positioned.fill(
-              child: InteractiveViewer(
-                transformationController: _controller,
-                minScale: 0.1,
-                maxScale: 10.0,
-                scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
-                child: CustomPaint(
-                  painter: MapPainter(mapImage: widget.robotStatusViewModel.currentMapImage),
-                ),
-              )
-            ),
-            Positioned(
-              right: 25,
-              bottom: 25,
-              child: MapControls(
-                onResetClicked: _reset,
-                onScaleChanged: (scale) {
-                  _setScale(scale);
-                },
-              ),
-            )
-          ],
-        ) ;
-      }
+    final Positioned mapPositioned = switch (widget.mapData.mapImage) {
+      null => Positioned(
+        width: 56.0,
+        height: 56.0,
+        child: CircularProgressIndicator()
+      ),
+      _ => Positioned.fill(
+        child: InteractiveViewer(
+          transformationController: _controller,
+          minScale: 0.1,
+          maxScale: 10.0,
+          scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
+          child: CustomPaint(
+            painter: MapPainter(mapImage: widget.mapData.mapImage),
+          ),
+        )
+      )
+    };
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        mapPositioned,
+        Positioned(
+          right: 25,
+          bottom: 25,
+          child: MapControls(
+            onResetClicked: _reset,
+            onScaleChanged: (scale) {
+              _setScale(scale);
+            },
+          ),
+        )
+      ],
     );
   }
 }

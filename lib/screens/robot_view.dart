@@ -1,13 +1,16 @@
-import 'labels.dart';
-import 'map_display.dart';
 import 'package:flutter/widget_previews.dart';
-import 'package:rui/data/robot_status_model.dart';
+import 'package:rui/data/data_types.dart';
+import 'package:rui/data/robot_model.dart';
+import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/screens/labels.dart';
+import 'package:rui/screens/map_display.dart';
+import 'package:rui/screens/robot_status_panel.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
-import 'robot_status_panel.dart';
 
 @Preview(name: 'Robot Dashboard')
 Widget robotDashboard() {
-  RobotStatusViewModel vm = RobotStatusViewModel();
+  final rm = RobotModel();
+  final vm = RobotStatusViewModel(robotModel: rm);
   return RobotDashboard(robotStatusViewModel: vm);
 }
 
@@ -19,14 +22,19 @@ class RobotMainView extends StatefulWidget {
 }
 
 class _RobotMainView extends State<RobotMainView> {
-  final RobotStatusViewModel _robotStatusViewModel = RobotStatusViewModel();
+  _RobotMainView() : robotModel = RobotModel() {
+    robotStatusViewModel = RobotStatusViewModel(robotModel: robotModel);
+  }
+
+  RobotModel robotModel;
+  late RobotStatusViewModel robotStatusViewModel;
   int _tabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       headers: [
-        RobotHeaderView(robotStatusViewModel: _robotStatusViewModel),
+        RobotHeaderView(robotStatusViewModel: robotStatusViewModel),
         Divider()
       ],
       child: Column(
@@ -50,7 +58,7 @@ class _RobotMainView extends State<RobotMainView> {
               child: IndexedStack(
               index: _tabIndex,
               children: [
-                RobotDashboard(robotStatusViewModel: _robotStatusViewModel),
+                RobotDashboard(robotStatusViewModel: robotStatusViewModel),
                 RobotWaypoints(),
                 RobotMaps()
               ],
@@ -104,10 +112,21 @@ class RobotHeaderView extends StatelessWidget {
   }
 }
 
-class RobotDashboard extends StatelessWidget {
+class RobotDashboard extends StatefulWidget {
   const RobotDashboard({required this.robotStatusViewModel, super.key});
 
   final RobotStatusViewModel robotStatusViewModel;
+
+  @override
+  State<StatefulWidget> createState() => _RobotDashboard();
+}
+
+class _RobotDashboard extends State<RobotDashboard> {
+  @override
+  void initState() {
+    super.initState();
+    widget.robotStatusViewModel.fetchCurrentMap();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,10 +135,15 @@ class RobotDashboard extends StatelessWidget {
       children: [
         Expanded(
           child: ClipRect(
-            child: MapDisplay(robotStatusViewModel: robotStatusViewModel),
+            child: ValueListenableBuilder(
+              valueListenable: widget.robotStatusViewModel.currentMapNotifier,
+              builder: (context, value, child) {
+                return MapDisplay(mapData: value);
+              }
+            ),
           )
         ),
-        RobotStatusPanel(robotStatusViewModel: robotStatusViewModel),
+        RobotStatusPanel(robotStatusViewModel: widget.robotStatusViewModel),
       ],
     );
   }
