@@ -115,7 +115,9 @@ class RobotDashboard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: MapDisplay(robotStatusViewModel: robotStatusViewModel)
+          child: ClipRect(
+            child: MapDisplay(robotStatusViewModel: robotStatusViewModel),
+          )
         ),
         RobotStatusPanel(robotStatusViewModel: robotStatusViewModel),
       ],

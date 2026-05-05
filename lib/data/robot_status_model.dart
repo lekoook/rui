@@ -1,4 +1,7 @@
+import 'dart:ui' as ui;
+import 'data_types.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 enum RobotConnectionStatus {
   unknown('Unknown'),
@@ -118,28 +121,49 @@ class RobotStatusViewModel {
     _connectionNotifier = ValueNotifier(RobotConnectionStatus.unknown),
     _batteryStateNotifier = ValueNotifier(BatteryState()),
     _autonomyNotifier = ValueNotifier(AutonomyStatus.unknown),
-    _locationNotifier = ValueNotifier(LocationData()) {
+    _locationNotifier = ValueNotifier(LocationData()),
+    _currentMapNotifier = ValueNotifier(MapMetaData()) {
       // TODO: Mock data, to be implemented.
       _connectionNotifier.value = RobotConnectionStatus.connected;
       _batteryStateNotifier.value = BatteryState(percentage: 47.0);
       _autonomyNotifier.value = AutonomyStatus.idle;
       _locationNotifier.value = LocationData(posX: 1.23, posY: 4.56, oriW: 1.0);
+
+      // TODO: Temp
+      loadImage('test_map.png').then((value) {
+        _currentMapImage = value;
+        _currentMapNotifier.value = MapMetaData();
+      });
     }
 
   final ValueNotifier<RobotConnectionStatus> _connectionNotifier;
   final ValueNotifier<BatteryState> _batteryStateNotifier;
   final ValueNotifier<AutonomyStatus> _autonomyNotifier;
   final ValueNotifier<LocationData> _locationNotifier;
+  final ValueNotifier<MapMetaData> _currentMapNotifier;
+  ui.Image? _currentMapImage;
 
   ValueNotifier<RobotConnectionStatus> get connectionNotifier => _connectionNotifier;
   ValueNotifier<BatteryState> get batteryStateNotifier => _batteryStateNotifier;
   ValueNotifier<AutonomyStatus> get autonomyNotifier => _autonomyNotifier;
   ValueNotifier<LocationData> get locationNotifier => _locationNotifier;
+  ValueNotifier<MapMetaData> get currentMapNotifier => _currentMapNotifier;
+  ui.Image? get currentMapImage => _currentMapImage;
 
   void dispose() {
     _connectionNotifier.dispose();
     _batteryStateNotifier.dispose();
     _autonomyNotifier.dispose();
     _locationNotifier.dispose();
+    _currentMapNotifier.dispose();
+    _currentMapImage?.dispose();
+  }
+
+  Future<ui.Image> loadImage(String asset) async {
+    final data = await rootBundle.load(asset);
+    final bytes = data.buffer.asUint8List();
+    final codec = await ui.instantiateImageCodec(bytes);
+    final frame = await codec.getNextFrame();
+    return frame.image;
   }
 }
