@@ -41,7 +41,7 @@ class _RobotMainView extends State<RobotMainView> {
       length: tabsList.length,
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 80.0,
+          toolbarHeight: 90.0,
           title: RobotHeaderView(robotStatusViewModel: robotStatusViewModel),
           bottom: const TabBar(
             tabs: tabsList
