@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
@@ -5,7 +6,7 @@ import 'package:rui/data/robot_status_view_model.dart';
 import 'package:rui/screens/labels.dart';
 import 'package:rui/screens/map_display.dart';
 import 'package:rui/screens/robot_status_panel.dart';
-import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 @Preview(name: 'Robot Dashboard')
 Widget robotDashboard() {
@@ -28,43 +29,38 @@ class _RobotMainView extends State<RobotMainView> {
 
   RobotModel robotModel;
   late RobotStatusViewModel robotStatusViewModel;
-  int _tabIndex = 0;
+  static const List<Tab> tabsList = <Tab>[
+    Tab(text: 'Dashboard',),
+    Tab(text: 'Waypoints',),
+    Tab(text: 'Maps',),
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      headers: [
-        RobotHeaderView(robotStatusViewModel: robotStatusViewModel),
-        Divider()
-      ],
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TabList(
-            index: _tabIndex,
-            onChanged: (value) {
-              setState(() {
-                _tabIndex = value;
-              });
-            },
-            children: [
-              TabItem(child: TextWithIcon.iconData(text: 'Dashboard', iconData: Icons.dashboard)),
-              TabItem(child: TextWithIcon.iconData(text: 'Waypoints', iconData: Icons.route)),
-              TabItem(child: TextWithIcon.iconData(text: 'Map', iconData: Icons.map))
-            ],
+    return DefaultTabController(
+      length: tabsList.length,
+      child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 80.0,
+          title: RobotHeaderView(robotStatusViewModel: robotStatusViewModel),
+          bottom: const TabBar(
+            tabs: tabsList
           ),
-          const Gap(8),
-          Expanded(
-              child: IndexedStack(
-              index: _tabIndex,
-              children: [
-                RobotDashboard(robotStatusViewModel: robotStatusViewModel),
-                RobotWaypoints(),
-                RobotMaps()
-              ],
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child:TabBarView(
+                children: [
+                  RobotDashboard(robotStatusViewModel: robotStatusViewModel),
+                  RobotWaypoints(),
+                  RobotMaps(),
+                ]
+              ),
             ),
-          )
-        ],
+            RobotStatusFooterView(robotStatusViewModel: robotStatusViewModel)
+          ],
+        )
       )
     );
   }
@@ -77,37 +73,65 @@ class RobotHeaderView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      title: Text('RUI'),
-      subtitle: Text('Robot Command & Control Interface'),
-      leading: [
-        Icon(
-          Icons.computer,
-          color: Colors.cyan,
-          size: 48.0,
-          semanticLabel: "App icon.",
-        )
-      ],
-      trailing: [
-        ValueListenableBuilder<RobotConnectionStatus>(
-          valueListenable: robotStatusViewModel.connectionNotifier,
-          builder: (context, connection, child) {
-            return ConnectionStatusLabel(status: connection);
-          }
+    return Column(
+      children: [
+        Row(
+          spacing: 8.0,
+          children: [
+            Icon(
+              Icons.computer,
+              color: Colors.cyan,
+              size: 48.0,
+              semanticLabel: "App icon.",
+            ),
+            Expanded(
+              child: Text('Robot Command & Control'),
+            ),
+          ],
         ),
-        ValueListenableBuilder<BatteryState>(
-          valueListenable: robotStatusViewModel.batteryStateNotifier,
-          builder: (context, battery, child) {
-            return BatteryStateLabel(state: battery);
-          }
-        ),
-        ValueListenableBuilder<AutonomyStatus>(
-          valueListenable: robotStatusViewModel.autonomyNotifier,
-          builder: (context, autonomy, child) {
-            return AutonomyStatusLabel(status: autonomy);
-          }
-        )
+        ShadSeparator.horizontal()
       ],
+    );
+  }
+}
+
+class RobotStatusFooterView extends StatefulWidget {
+  const RobotStatusFooterView({required this.robotStatusViewModel, super.key});
+
+  final RobotStatusViewModel robotStatusViewModel;
+
+  @override
+  State<StatefulWidget> createState() => _RobotStatusFooterViewState();
+}
+
+class _RobotStatusFooterViewState extends State<RobotStatusFooterView> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(8.0),
+        child: Row(
+        spacing: 8.0,
+        children: [
+          ValueListenableBuilder<RobotConnectionStatus>(
+            valueListenable: widget.robotStatusViewModel.connectionNotifier,
+            builder: (context, connection, child) {
+              return ConnectionStatusLabel(status: connection);
+            }
+          ),
+          ValueListenableBuilder<AutonomyStatus>(
+            valueListenable: widget.robotStatusViewModel.autonomyNotifier,
+            builder: (context, autonomy, child) {
+              return AutonomyStatusLabel(status: autonomy);
+            }
+          ),
+          ValueListenableBuilder<BatteryState>(
+            valueListenable: widget.robotStatusViewModel.batteryStateNotifier,
+            builder: (context, battery, child) {
+              return BatteryStateLabel(state: battery);
+            }
+          ),
+        ],
+      )
     );
   }
 }

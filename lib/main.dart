@@ -1,5 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:rui/screens/robot_view.dart';
-import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 void main() {
   runApp(const MainApp());
@@ -10,47 +11,39 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ColorScheme darkColorScheme = ColorSchemes.darkSlate.copyWith(
-      border: () => Colors.gray
-    );
-    return ShadcnApp(
-      theme: ThemeData(
+    final lightColorScheme = ShadSlateColorScheme.light();
+    final darkColorScheme = ShadSlateColorScheme.dark();
+    return ShadApp.custom(
+      theme: ShadThemeData(
         // Customize light mode colors and design tokens.
-        colorScheme: ColorSchemes.lightSlate,
-        // Corner radius scale applied across components.
-        radius: 0.25,
-        // Global size scale multiplier.
-        scaling: 1.2,
-        // Semi-translucent surfaces with blur create a glassy look.
-        surfaceOpacity: 0.8,
-        surfaceBlur: 10,
-        // Swap default fonts for sans/mono text styles.
-        typography: Typography.geist(
-          sans: TextStyle(
-            fontFamily: 'Inter',
-          ),
-          mono: TextStyle(
-            fontFamily: 'FiraCode',
-          ),
+        colorScheme: lightColorScheme,
+        separatorTheme: ShadSeparatorTheme(
+          color: lightColorScheme.primary
         )
       ),
-      darkTheme: ThemeData.dark(
+      darkTheme: ShadThemeData(
         // Mirror customizations for dark mode.
         colorScheme: darkColorScheme,
-        radius: 0.25,
-        scaling: 1.2,
-        surfaceOpacity: 0.8,
-        surfaceBlur: 10,
-        typography: Typography.geist(
-          sans: TextStyle(
-            fontFamily: 'Inter',
-          ),
-          mono: TextStyle(
-            fontFamily: 'FiraCode',
-          ),
+        separatorTheme: ShadSeparatorTheme(
+          color: darkColorScheme.primary
         )
       ),
-      home: RobotMainView()
+      appBuilder: (context) {
+        final shadTheme = Theme.of(context);
+        final appTheme = shadTheme.copyWith(
+          // Change material themes here.
+        );
+        return MaterialApp(
+          theme: appTheme,
+          localizationsDelegates: const [
+            GlobalShadLocalizations.delegate,
+          ],
+          builder: (context, child) {
+            return ShadAppBuilder(child: child!);
+          },
+          home: RobotMainView()
+        );
+      },
     );
   }
 }

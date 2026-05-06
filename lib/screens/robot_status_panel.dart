@@ -1,9 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
 import 'package:rui/screens/labels.dart';
-import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 
 @Preview(name: "Robot Status Panel")
 Widget robotStatusPanel() {

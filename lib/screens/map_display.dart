@@ -1,10 +1,11 @@
 import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
-import 'package:shadcn_flutter/shadcn_flutter.dart';
+import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 @Preview(name: 'Map Display')
@@ -64,8 +65,6 @@ class _MapDisplayState extends State<MapDisplay> {
   Widget build(BuildContext context) {
     final Positioned mapPositioned = switch (widget.mapData.mapImage) {
       null => Positioned(
-        width: 56.0,
-        height: 56.0,
         child: CircularProgressIndicator()
       ),
       _ => Positioned.fill(
@@ -114,7 +113,7 @@ class MapControls extends StatefulWidget {
 }
 
 class _MapControlsState extends State<MapControls> {
-  SliderValue _sliderValue = SliderValue.single(0.5);
+  double _sliderValue = 0.5;
 
   @override
   Widget build(BuildContext context) {
@@ -129,11 +128,11 @@ class _MapControlsState extends State<MapControls> {
               setState(() {
                 _sliderValue = newValue;
               });
-              widget.onScaleChanged?.call(newValue.value);
+              widget.onScaleChanged?.call(newValue);
             },
           )
         ),
-        IconButton.secondary(
+        ShadIconButton.secondary(
           icon: Icon(Icons.home),
           onPressed: widget.onResetClicked?.call,
         ),
