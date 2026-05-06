@@ -1,9 +1,43 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:web/web.dart' as web;
 
 class RobotModel {
   RobotModel();
+
+  web.EventSource eventSource = web.EventSource('');
+
+  Future<bool> connect(String url) async {
+    final completer = Completer<bool>();
+    eventSource = web.EventSource(url);
+
+    eventSource.onOpen.first.then((_) {
+      if (!completer.isCompleted) {
+        if (eventSource.readyState == web.EventSource.OPEN) {
+          completer.complete(true);
+        } else {
+          completer.complete(false);
+        }
+      }
+    });
+
+    eventSource.onError.first.then((error) {
+      if (!completer.isCompleted) {
+        completer.completeError(false);
+      }
+    });
+
+    // TODO: Add listener for various events.
+    // eventSource.addEventListener(type, callback)
+
+    return completer.future;
+  }
+
+  void disconnect() {
+    eventSource.close();
+  }
 
   Future<MapData?> getCurrentMap() async {
     // TODO: Temp.
@@ -24,5 +58,9 @@ class RobotModel {
       ),
       mapImage: frame.image
     );
+  }
+
+  void dispose() {
+    disconnect();
   }
 }
