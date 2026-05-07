@@ -5,6 +5,8 @@ import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/screens/buttons.dart';
+import 'package:rui/screens/cards.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:vector_math/vector_math_64.dart';
 
@@ -51,6 +53,7 @@ class MapDisplay extends StatefulWidget {
 
 class _MapDisplayState extends State<MapDisplay> {
   final _controller = TransformationController();
+  final _popoverController = ShadPopoverController();
 
   void _reset() {
     _controller.value = Matrix4.identity();
@@ -79,21 +82,39 @@ class _MapDisplayState extends State<MapDisplay> {
         )
       )
     };
-    return Stack(
-      alignment: AlignmentDirectional.center,
-      children: [
-        mapPositioned,
-        Positioned(
-          right: 25,
-          bottom: 25,
-          child: MapControls(
-            onResetClicked: _reset,
-            onScaleChanged: (scale) {
-              _setScale(scale);
-            },
-          ),
-        )
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        leading: ShadPopover(
+          controller: _popoverController,
+          popover: (context) {
+            return SizedBox(
+              width: 400,
+              height: 400,
+              child: MapInfoCard(mapData: widget.mapData)
+            );
+          },
+          child: InfoButton.ghost(
+            onPressed: _popoverController.toggle,
+          )
+        ),
+        title: Text(widget.mapData.name),
+      ),
+      body: Stack(
+        alignment: AlignmentDirectional.center,
+        children: [
+          mapPositioned,
+          Positioned(
+            right: 25,
+            bottom: 25,
+            child: MapControls(
+              onResetClicked: _reset,
+              onScaleChanged: (scale) {
+                _setScale(scale);
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }

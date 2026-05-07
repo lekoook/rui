@@ -47,19 +47,23 @@ class _RobotMainView extends State<RobotMainView> {
             tabs: tabsList
           ),
         ),
-        body: Column(
-          children: [
-            Expanded(
-              child:TabBarView(
-                children: [
-                  RobotDashboard(robotStatusViewModel: robotStatusViewModel),
-                  RobotWaypoints(),
-                  RobotMaps(),
-                ]
+        body: Container(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            spacing: 4.0,
+            children: [
+              Expanded(
+                child:TabBarView(
+                  children: [
+                    RobotDashboard(robotStatusViewModel: robotStatusViewModel),
+                    RobotWaypoints(),
+                    RobotMaps(),
+                  ]
+                ),
               ),
-            ),
-            RobotStatusFooterView(robotStatusViewModel: robotStatusViewModel)
-          ],
+              RobotStatusFooterView(robotStatusViewModel: robotStatusViewModel)
+            ],
+          ),
         )
       )
     );

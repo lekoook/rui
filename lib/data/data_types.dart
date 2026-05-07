@@ -138,11 +138,21 @@ class Pose {
   }
 
   double get yaw => _yaw();
+
+  @override
+  String toString() {
+    return 'px: $posX, py: $posY, pz: $posZ, ow: $oriW, ox: $oriX, oy: $oriY, oz: $oriZ';
+  }
+
+  String toString2D() {
+    return 'px: $posX, py: $posY, yaw: ${_yaw()}';
+  }
 }
 
 class MapData {
   const MapData({
     this.name = '',
+    this.description = '',
     this.resolution = 0.0,
     this.width = 0.0,
     this.height = 0.0,
@@ -151,6 +161,7 @@ class MapData {
   });
 
   final String name;
+  final String description;
   final double resolution;
   final double width;
   final double height;
