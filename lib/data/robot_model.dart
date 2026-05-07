@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
+import 'errors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:web/web.dart' as web;
@@ -7,26 +9,35 @@ import 'package:web/web.dart' as web;
 class RobotModel {
   RobotModel();
 
-  web.EventSource eventSource = web.EventSource('');
+  web.EventSource _eventSource = web.EventSource('');
+  final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
+
+  ValueNotifier<RobotConnectionStatus> get connectionStatus => _connectionStatus;
 
   Future<bool> connect(String url) async {
     final completer = Completer<bool>();
-    eventSource = web.EventSource(url);
+    _eventSource = web.EventSource(url);
 
-    eventSource.onOpen.first.then((_) {
+    _eventSource.onOpen.first.then((_) {
       if (!completer.isCompleted) {
-        if (eventSource.readyState == web.EventSource.OPEN) {
+        if (_eventSource.readyState == web.EventSource.OPEN) {
+          _connectionStatus.value = RobotConnectionStatus.connected;
           completer.complete(true);
         } else {
+          _connectionStatus.value = RobotConnectionStatus.disconnected;
           completer.complete(false);
         }
       }
     });
 
-    eventSource.onError.first.then((error) {
+    _eventSource.onError.first.then((error) {
       if (!completer.isCompleted) {
-        completer.completeError(false);
+        _connectionStatus.value = RobotConnectionStatus.disconnected;
+        completer.completeError(ConnectError.sseError);
       }
+    });
+    _eventSource.onError.listen((error) {
+      _connectionStatus.value = RobotConnectionStatus.disconnected;
     });
 
     // TODO: Add listener for various events.
@@ -36,7 +47,7 @@ class RobotModel {
   }
 
   void disconnect() {
-    eventSource.close();
+    _eventSource.close();
   }
 
   Future<MapData?> getCurrentMap() async {

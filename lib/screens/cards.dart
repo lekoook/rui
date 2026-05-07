@@ -1,6 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
+
+@Preview(name: 'RobotConnectionCard')
+Widget robotConnectionCard() {
+  return ShadApp(
+    home: RobotConnectionCard(
+      onConnectPressed: (url) {},
+      onCancelPressed: () {}
+    )
+  );
+}
 
 class TableInfoCard extends ShadCard {
   TableInfoCard({
@@ -82,4 +93,76 @@ class MapInfoCard extends TableInfoCard {
   );
 
   final MapData mapData;
+}
+
+class RobotConnectionCard extends StatefulWidget {
+  const RobotConnectionCard({
+    super.key,
+    this.onConnectPressed,
+    this.onCancelPressed,
+    this.doneNotifier
+  });
+
+  final Function(String)? onConnectPressed;
+  final Function()? onCancelPressed;
+  final ValueNotifier? doneNotifier;
+
+  @override
+  State<StatefulWidget> createState() => _RobotConnectionCardState();
+}
+
+class _RobotConnectionCardState extends State<RobotConnectionCard> {
+  final _formKey = GlobalKey<ShadFormState>();
+
+  @override
+  Widget build(BuildContext context) {
+    return ShadCard(
+      title: Text('Connect Robot'),
+      child: ShadForm(
+        key: _formKey,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 350, maxHeight: 250),
+          child: Column(
+            children: [
+              ShadInputFormField(
+                id: 'address',
+                label: const Text('Address'),
+                placeholder: const Text('Enter address'),
+                description: const Text('Robot\'s address for connection.'),
+                validator: (value) {
+                  if (value.isEmpty) {
+                    return 'Cannot be empty.';
+                  }
+                  final uri = Uri.tryParse(value);
+                  if (uri == null) {
+                    return 'Not a valid URL address.';
+                  }
+                  return null;
+                },
+              ),
+              Row(
+                children: [
+                  ShadButton.secondary(
+                    onPressed: widget.onCancelPressed,
+                    child: const Text('Cancel'),
+                  ),
+                  Spacer(),
+                  ShadButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.saveAndValidate()) {
+                        widget.onConnectPressed?.call(_formKey.currentState!.value['address']);
+                        if (widget.doneNotifier != null) {
+                        }
+                      }
+                    },
+                    child: const Text('Connect'),
+                  )
+                ],
+              )
+            ],
+          ),
+        )
+      ),
+    );
+  }
 }

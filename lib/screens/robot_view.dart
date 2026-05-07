@@ -5,6 +5,7 @@ import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
 import 'package:rui/screens/labels.dart';
 import 'package:rui/screens/map_display.dart';
+import 'package:rui/screens/popovers.dart';
 import 'package:rui/screens/robot_status_panel.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -34,6 +35,11 @@ class _RobotMainView extends State<RobotMainView> {
     Tab(text: 'Waypoints',),
     Tab(text: 'Maps',),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +97,13 @@ class RobotHeaderView extends StatelessWidget {
             Expanded(
               child: Text('Robot Command & Control'),
             ),
+            ConnectRobotPopover(
+              onConnectPressed: (url) {
+                robotStatusViewModel.connectToRobot(url);
+              },
+              onCancelPressed: () {},
+              connectedNotifier: robotStatusViewModel.connectionNotifier,
+            )
           ],
         ),
         ShadSeparator.horizontal()
