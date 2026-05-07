@@ -50,6 +50,7 @@ class _RobotMainView extends State<RobotMainView> {
           toolbarHeight: 90.0,
           title: RobotHeaderView(robotStatusViewModel: robotStatusViewModel),
           bottom: const TabBar(
+            textScaler: TextScaler.linear(1.52),
             tabs: tabsList
           ),
         ),
@@ -175,13 +176,22 @@ class _RobotDashboard extends State<RobotDashboard> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: ClipRect(
-            child: ValueListenableBuilder(
-              valueListenable: widget.robotStatusViewModel.currentMapNotifier,
-              builder: (context, value, child) {
-                return MapDisplay(mapData: value);
-              }
+          child: Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).colorScheme.outline,
+                width: 1.0
+              ),
+              borderRadius: BorderRadius.zero
             ),
+            child: ClipRect(
+              child: ValueListenableBuilder(
+                valueListenable: widget.robotStatusViewModel.currentMapNotifier,
+                builder: (context, value, child) {
+                  return MapDisplay(mapData: value);
+                }
+              ),
+            )
           )
         ),
         RobotStatusPanel(robotStatusViewModel: widget.robotStatusViewModel),

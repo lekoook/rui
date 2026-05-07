@@ -99,22 +99,25 @@ class _MapDisplayState extends State<MapDisplay> {
         ),
         title: Text(widget.mapData.name),
       ),
-      body: Stack(
-        alignment: AlignmentDirectional.center,
-        children: [
-          mapPositioned,
-          Positioned(
-            right: 25,
-            bottom: 25,
-            child: MapControls(
-              onResetClicked: _reset,
-              onScaleChanged: (scale) {
-                _setScale(scale);
-              },
-            ),
-          )
-        ],
-      ),
+      body: Container(
+        color: Theme.of(context).colorScheme.surfaceContainer,
+        child: Stack(
+          alignment: AlignmentDirectional.center,
+          children: [
+            mapPositioned,
+            Positioned(
+              right: 25,
+              bottom: 25,
+              child: MapControls(
+                onResetClicked: _reset,
+                onScaleChanged: (scale) {
+                  _setScale(scale);
+                },
+              ),
+            )
+          ],
+        ),
+      )
     );
   }
 }
