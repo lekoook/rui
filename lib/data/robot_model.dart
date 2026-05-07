@@ -16,6 +16,7 @@ class RobotModel {
   web.EventSource _eventSource = web.EventSource('');
   final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
   final _batteryState = ValueNotifier(BatteryState());
+  final _robotPose = ValueNotifier(PoseData());
 
   late final _eventsMap = {
     'battery_state' : _onBatteryState,
@@ -24,6 +25,7 @@ class RobotModel {
 
   ValueNotifier<RobotConnectionStatus> get connectionStatus => _connectionStatus;
   ValueNotifier<BatteryState> get batteryState => _batteryState;
+  ValueNotifier<PoseData> get robotPose => _robotPose;
 
   void _onBatteryState(web.MessageEvent event) {
     final str = event.data.toString();
@@ -38,7 +40,15 @@ class RobotModel {
   }
 
   void _onRobotPose(web.MessageEvent event) {
-    print('Robot pose event!');
+    final str = event.data.toString();
+    try {
+      final decoded = jsonDecode(str);
+      _robotPose.value = PoseData.fromJson(decoded);
+    } on FormatException catch (e) {
+      print('robot_pose event invalid JSON: ${e.message}\n$str');
+    } catch (e) {
+      print('robot_pose event unexpected JSON error: $e');
+    }
   }
 
   Future<bool> connect(String url) async {
@@ -68,7 +78,6 @@ class RobotModel {
       _connectionStatus.value = RobotConnectionStatus.disconnected;
     });
 
-    // TODO: Add listener for various events.
     _eventsMap.forEach((k, v) {
       _eventSource.addEventListener(k, (web.Event event) {
         final message = event as MessageEvent;

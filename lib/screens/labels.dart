@@ -128,7 +128,7 @@ class LocationLabel extends TextLabel {
     color: Colors.transparent
   );
 
-  final LocationData locationData;
+  final PoseData locationData;
 }
 
 class BatteryStateLabel extends IconLabel {

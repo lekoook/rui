@@ -128,8 +128,8 @@ class BatteryState {
   final List<double> cellTemperature;
 }
 
-class LocationData {
-  const LocationData({
+class PoseData {
+  const PoseData({
     this.posX = 0.0,
     this.posY = 0.0,
     this.posZ = 0.0,
@@ -138,6 +138,18 @@ class LocationData {
     this.oriY = 0.0,
     this.oriZ = 0.0
   });
+
+  factory PoseData.fromJson(Map<String, dynamic> json) {
+    return PoseData(
+      posX: json['posX'],
+      posY: json['posY'],
+      posZ: json['posZ'],
+      oriW: json['oriW'],
+      oriX: json['oriX'],
+      oriY: json['oriY'],
+      oriZ: json['oriZ'],
+    );
+  }
 
   final double posX;
   final double posY;

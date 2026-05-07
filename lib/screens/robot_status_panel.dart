@@ -66,8 +66,8 @@ class RobotStatusPanel extends StatelessWidget {
           FieldRow(
             iconData: Icons.my_location,
             name: 'Location',
-            dataWidget: ValueListenableBuilder<LocationData>(
-              valueListenable: robotStatusViewModel.locationNotifier,
+            dataWidget: ValueListenableBuilder<PoseData>(
+              valueListenable: robotStatusViewModel.robotPoseNotifier,
               builder: (context, location, child) {
                 return LocationLabel(locationData: location);
               }
