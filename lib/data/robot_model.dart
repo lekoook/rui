@@ -1,5 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:js_interop';
 import 'dart:ui';
+import 'package:web/helpers.dart';
+
 import 'errors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -11,8 +15,31 @@ class RobotModel {
 
   web.EventSource _eventSource = web.EventSource('');
   final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
+  final _batteryState = ValueNotifier(BatteryState());
+
+  late final _eventsMap = {
+    'battery_state' : _onBatteryState,
+    'robot_pose' : _onRobotPose,
+  };
 
   ValueNotifier<RobotConnectionStatus> get connectionStatus => _connectionStatus;
+  ValueNotifier<BatteryState> get batteryState => _batteryState;
+
+  void _onBatteryState(web.MessageEvent event) {
+    final str = event.data.toString();
+    try {
+      final decoded = jsonDecode(str);
+      _batteryState.value = BatteryState.fromJson(decoded);
+    } on FormatException catch (e) {
+      print('battery_state event invalid JSON: ${e.message}\n$str');
+    } catch (e) {
+      print('battery_state event unexpected JSON error: $e');
+    }
+  }
+
+  void _onRobotPose(web.MessageEvent event) {
+    print('Robot pose event!');
+  }
 
   Future<bool> connect(String url) async {
     final completer = Completer<bool>();
@@ -37,11 +64,17 @@ class RobotModel {
       }
     });
     _eventSource.onError.listen((error) {
+      _eventSource.close();
       _connectionStatus.value = RobotConnectionStatus.disconnected;
     });
 
     // TODO: Add listener for various events.
-    // eventSource.addEventListener(type, callback)
+    _eventsMap.forEach((k, v) {
+      _eventSource.addEventListener(k, (web.Event event) {
+        final message = event as MessageEvent;
+        v(message);
+      }.toJS);
+    });
 
     return completer.future;
   }

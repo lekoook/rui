@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ui' as ui;
 
 enum RobotConnectionStatus {
@@ -18,38 +19,59 @@ enum AutonomyStatus {
 }
 
 enum BatteryPowerStatus {
-  unknown('Unknown'),
-  charging('Charging'),
-  discharging('Discharging'),
-  notCharging('NotCharging'),
-  full('Full');
-  const BatteryPowerStatus(this.label);
+  unknown(0, 'Unknown'),
+  charging(1, 'Charging'),
+  discharging(2, 'Discharging'),
+  notCharging(3, 'NotCharging'),
+  full(4, 'Full');
+  const BatteryPowerStatus(this.idx, this.label);
+  factory BatteryPowerStatus.fromIndex(int idx) {
+    return values.firstWhere(
+      (e) => e.idx == idx,
+      orElse: () => BatteryPowerStatus.unknown
+    );
+  }
+  final int idx;
   final String label;
 }
 
 enum BatteryPowerHealth {
-  unknown('Unknown'),
-  good('Good'),
-  overheat('Overheat'),
-  dead('Dead'),
-  overvoltage('Overvoltage'),
-  unspecFailure('UnspecFailure'),
-  cold('Cold'),
-  watchdogTimerExpire('WatchdogTimerExpire'),
-  safetyTimerExpire('SafetyTimerExpire');
-  const BatteryPowerHealth(this.label);
+  unknown(0, 'Unknown'),
+  good(1, 'Good'),
+  overheat(2, 'Overheat'),
+  dead(3, 'Dead'),
+  overvoltage(4, 'Overvoltage'),
+  unspecFailure(5, 'UnspecFailure'),
+  cold(6, 'Cold'),
+  watchdogTimerExpire(7, 'WatchdogTimerExpire'),
+  safetyTimerExpire(8, 'SafetyTimerExpire');
+  const BatteryPowerHealth(this.idx, this.label);
+  factory BatteryPowerHealth.fromIndex(int idx) {
+    return values.firstWhere(
+      (e) => e.idx == idx,
+      orElse: () => BatteryPowerHealth.unknown
+    );
+  }
+  final int idx;
   final String label;
 }
 
 enum BatteryPowerTech {
-  unknown('UNKNOWN'),
-  nimh('NIMH'),
-  lion('LION'),
-  lipo('LIPO'),
-  life('LIFE'),
-  nicd('NICD'),
-  limn('LIMN');
-  const BatteryPowerTech(this.label);
+  unknown(0, 'UNKNOWN'),
+  nimh(1, 'NIMH'),
+  lion(2, 'LION'),
+  lipo(3, 'LIPO'),
+  life(4, 'LIFE'),
+  nicd(5, 'NICD'),
+  limn(6, 'LIMN');
+  const BatteryPowerTech(this.idx, this.label);
+  factory BatteryPowerTech.fromIndex(int idx) {
+    return values.firstWhere(
+      (e) => e.idx == idx,
+      orElse: () => BatteryPowerTech.unknown
+    );
+  }
+  final int idx;
   final String label;
 }
 
@@ -70,7 +92,24 @@ class BatteryState {
     this.powerTechnology = BatteryPowerTech.unknown,
     this.cellVoltage = const [],
     this.cellTemperature = const []
-  }) : time = time ?? DateTime.now();
+  }) : time = time ?? DateTime(0);
+
+  factory BatteryState.fromJson(Map<String, dynamic> json) {
+    return BatteryState(
+      location: json['location'],
+      serialNumber: json['serialNumber'],
+      voltage: json['voltage'],
+      temperature: json['temperature'],
+      current: json['current'],
+      charge: json['charge'],
+      capacity: json['capacity'],
+      designCapacity: json['designCapacity'],
+      percentage: json['percentage'],
+      powerStatus: BatteryPowerStatus.fromIndex(json['powerStatus']),
+      powerHealth: BatteryPowerHealth.fromIndex(json['powerHealth']),
+      powerTechnology: BatteryPowerTech.fromIndex(json['powerTechnology']),
+    );
+  }
 
   final String location;
   final String serialNumber;

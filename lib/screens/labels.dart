@@ -142,9 +142,9 @@ class BatteryStateLabel extends IconLabel {
       < 10.0 => Icons.battery_0_bar,
       < 20.0 => Icons.battery_1_bar,
       < 30.0 => Icons.battery_2_bar,
-      < 50.0 => Icons.battery_3_bar,
-      < 70.0 => Icons.battery_4_bar,
-      < 80.0 => Icons.battery_5_bar,
+      < 40.0 => Icons.battery_3_bar,
+      < 50.0 => Icons.battery_4_bar,
+      < 70.0 => Icons.battery_5_bar,
       < 90.0 => Icons.battery_6_bar,
       _ => Icons.battery_full
     },

@@ -129,6 +129,7 @@ class _RobotConnectionCardState extends State<RobotConnectionCard> {
                 label: const Text('Address'),
                 placeholder: const Text('Enter address'),
                 description: const Text('Robot\'s address for connection.'),
+                initialValue: 'http://localhost:4280/events', // TODO: Temporary
                 validator: (value) {
                   if (value.isEmpty) {
                     return 'Cannot be empty.';
