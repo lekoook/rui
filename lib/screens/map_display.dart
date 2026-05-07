@@ -9,13 +9,13 @@ import 'package:rui/data/robot_status_view_model.dart';
 import 'package:rui/screens/buttons.dart';
 import 'package:rui/screens/cards.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
-import 'package:vector_math/vector_math_64.dart';
+import 'package:vector_math/vector_math_64.dart' as math;
 
 @Preview(name: 'Map Display')
 Widget mapDisplay() {
   final rm = RobotModel();
   final vm = RobotStatusViewModel(robotModel: rm);
-  return MapDisplay(mapData: vm.currentMapNotifier.value);
+  return MapDisplay(mapData: vm.currentMapNotifier.value, robotPose: PoseData());
 }
 
 class MapPainter extends CustomPainter {
@@ -44,9 +44,14 @@ class MapPainter extends CustomPainter {
 }
 
 class MapDisplay extends StatefulWidget {
-  const MapDisplay({required this.mapData, super.key});
+  const MapDisplay({
+    super.key,
+    required this.mapData,
+    required this.robotPose
+  });
 
   final MapData mapData;
+  final PoseData robotPose;
 
   @override
   State<MapDisplay> createState() => _MapDisplayState();
@@ -64,13 +69,29 @@ class _MapDisplayState extends State<MapDisplay> {
     final dx = (_mapConstraints.maxWidth - widget.mapData.width * scale) / 2;
     final dy = (_mapConstraints.maxHeight - widget.mapData.height * scale) / 2;
     _controller.value = Matrix4.identity()
-      ..translateByVector3(Vector3(dx, dy, 0.0))
-      ..scaleByVector3(Vector3(scale, scale, scale));
+      ..translateByVector3(math.Vector3(dx, dy, 0.0))
+      ..scaleByVector3(math.Vector3(scale, scale, scale));
   }
 
   void _setScale(double scale) {
     // TODO: Implement.
     // throw UnimplementedError();
+  }
+
+  Offset _worldToMapPixel({
+    required double wx,
+    required double wy,
+    required double resolution,
+    required Offset origin,
+    required double mapHeight,
+  }) {
+    final px = (wx - origin.dx) / resolution;
+    final py = (wy - origin.dy) / resolution;
+
+    // flip ROS Y
+    final flippedY = mapHeight - py;
+
+    return Offset(px, flippedY);
   }
 
   @override
@@ -99,6 +120,16 @@ class _MapDisplayState extends State<MapDisplay> {
                     CustomPaint(
                       painter: MapPainter(mapImage: widget.mapData.mapImage),
                     ),
+                    RobotMapMarker(
+                      screenPosition: _worldToMapPixel(
+                        wx: widget.robotPose.posX,
+                        wy: widget.robotPose.posY,
+                        resolution: widget.mapData.resolution,
+                        origin: Offset(widget.mapData.origin.posX, widget.mapData.origin.posY),
+                        mapHeight: widget.mapData.height
+                      ),
+                      yaw: widget.robotPose.yaw()
+                    )
                   ],
                 ),
               ),
@@ -200,6 +231,33 @@ class _MapControlsState extends State<MapControls> {
   }
 }
 
+class RobotMapMarker extends StatelessWidget {
+  const RobotMapMarker({
+    super.key,
+    required this.screenPosition,
+    required this.yaw
+  });
+
+  final Offset screenPosition;
+  final double yaw;
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      left: screenPosition.dx - 16,
+      top: screenPosition.dy - 16,
+      child: Transform.rotate(
+        angle: yaw,
+        child: const Icon(
+          Icons.navigation,
+          size: 32,
+          color: Colors.red,
+        ),
+      ),
+    );
+  }
+}
+
 class InteractiveMapView extends StatefulWidget {
   final Widget child;
 
@@ -234,8 +292,8 @@ class _InteractiveMapViewState extends State<InteractiveMapView> {
         },
         child: Transform(
           transform: Matrix4.identity()
-            ..translateByVector3(Vector3(pan.dx, pan.dy, 0.0))
-            ..scaleByVector3(Vector3(scale, scale, scale)),
+            ..translateByVector3(math.Vector3(pan.dx, pan.dy, 0.0))
+            ..scaleByVector3(math.Vector3(scale, scale, scale)),
           child: widget.child,
         ),
       ),
