@@ -11,8 +11,8 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final lightColorScheme = ShadSlateColorScheme.light();
-    final darkColorScheme = ShadSlateColorScheme.dark();
+    final lightColorScheme = ShadBlueColorScheme.light();
+    final darkColorScheme = ShadBlueColorScheme.dark();
     return ShadApp.custom(
       theme: ShadThemeData(
         // Customize light mode colors and design tokens.
