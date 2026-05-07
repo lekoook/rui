@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
 import 'dart:ui';
-import 'package:web/helpers.dart';
 
 import 'errors.dart';
 import 'package:flutter/foundation.dart';
@@ -80,7 +79,7 @@ class RobotModel {
 
     _eventsMap.forEach((k, v) {
       _eventSource.addEventListener(k, (web.Event event) {
-        final message = event as MessageEvent;
+        final message = event as web.MessageEvent;
         v(message);
       }.toJS);
     });
