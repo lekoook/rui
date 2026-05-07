@@ -1,4 +1,5 @@
 import 'dart:ui' as ui;
+import 'dart:math';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
@@ -30,7 +31,7 @@ class MapPainter extends CustomPainter {
     canvas.save();
     canvas.drawImage(
       mapImage!,
-      Offset((size.width - mapImage!.width) / 2.0, (size.height - mapImage!.height) / 2.0),
+      Offset.zero,
       Paint()
     );
     canvas.restore();
@@ -54,9 +55,17 @@ class MapDisplay extends StatefulWidget {
 class _MapDisplayState extends State<MapDisplay> {
   final _controller = TransformationController();
   final _popoverController = ShadPopoverController();
+  BoxConstraints _mapConstraints = BoxConstraints();
 
   void _reset() {
-    _controller.value = Matrix4.identity();
+    final scaleX = _mapConstraints.maxWidth / widget.mapData.width;
+    final scaleY = _mapConstraints.maxHeight / widget.mapData.height;
+    final scale = min(scaleX, scaleY);
+    final dx = (_mapConstraints.maxWidth - widget.mapData.width * scale) / 2;
+    final dy = (_mapConstraints.maxHeight - widget.mapData.height * scale) / 2;
+    _controller.value = Matrix4.identity()
+      ..translateByVector3(Vector3(dx, dy, 0.0))
+      ..scaleByVector3(Vector3(scale, scale, scale));
   }
 
   void _setScale(double scale) {
@@ -71,14 +80,30 @@ class _MapDisplayState extends State<MapDisplay> {
         child: CircularProgressIndicator()
       ),
       _ => Positioned.fill(
-        child: InteractiveViewer(
-          transformationController: _controller,
-          minScale: 0.1,
-          maxScale: 10.0,
-          scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
-          child: CustomPaint(
-            painter: MapPainter(mapImage: widget.mapData.mapImage),
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            _mapConstraints = constraints;
+            _reset();
+            return InteractiveViewer(
+              transformationController: _controller,
+              minScale: 1,
+              maxScale: 10.0,
+              scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
+              constrained: false,
+              boundaryMargin: const EdgeInsets.all(double.infinity),
+              child: SizedBox(
+                width: widget.mapData.width,
+                height: widget.mapData.height,
+                child: Stack(
+                  children: [
+                    CustomPaint(
+                      painter: MapPainter(mapImage: widget.mapData.mapImage),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
         )
       )
     };
@@ -93,8 +118,13 @@ class _MapDisplayState extends State<MapDisplay> {
               child: MapInfoCard(mapData: widget.mapData)
             );
           },
-          child: InfoButton.ghost(
-            onPressed: _popoverController.toggle,
+          child: ShadTooltip(
+            builder: (context) {
+              return Text('More map information');
+            },
+            child: InfoButton.ghost(
+              onPressed: _popoverController.toggle,
+            ),
           )
         ),
         title: Text(widget.mapData.name),
@@ -156,9 +186,14 @@ class _MapControlsState extends State<MapControls> {
             },
           )
         ),
-        ShadIconButton.secondary(
-          icon: Icon(Icons.home),
-          onPressed: widget.onResetClicked?.call,
+        ShadTooltip(
+          builder: (context) {
+            return Text('Reset view');
+          },
+          child: ShadIconButton.secondary(
+            icon: Icon(Icons.refresh),
+            onPressed: widget.onResetClicked?.call,
+          ),
         ),
       ],
     );
