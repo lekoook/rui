@@ -69,6 +69,8 @@ class _MapDisplayState extends State<MapDisplay> {
   final _controller = TransformationController();
   final _popoverController = ShadPopoverController();
   BoxConstraints _mapConstraints = BoxConstraints();
+  static const double _minScale = 1.0;
+  static const double _maxScale = 10.0;
 
   void _reset() {
     final scaleX = _mapConstraints.maxWidth / widget.mapData.width;
@@ -81,9 +83,17 @@ class _MapDisplayState extends State<MapDisplay> {
       ..scaleByVector3(math.Vector3(scale, scale, scale));
   }
 
-  void _setScale(double scale) {
-    // TODO: Implement.
-    // throw UnimplementedError();
+  void _setScale(double scale, double min, double max) {
+    // Normalize the given scale to the display's range.
+    final norm = (scale - min) / (max - min);
+    final scaleToUse = norm * (_maxScale - _minScale) + _minScale;
+    final x = _controller.value.storage[12];
+    final y = _controller.value.storage[13];
+    final dx = (_mapConstraints.maxWidth - widget.mapData.width * scaleToUse) / 2;
+    final dy = (_mapConstraints.maxHeight - widget.mapData.height * scaleToUse) / 2;
+    _controller.value = Matrix4.identity()
+      ..translateByVector3(math.Vector3(dx, dy, 0))
+      ..scaleByVector3(math.Vector3(scaleToUse, scaleToUse, scaleToUse));
   }
 
   @override
@@ -99,8 +109,8 @@ class _MapDisplayState extends State<MapDisplay> {
             _reset();
             return InteractiveViewer(
               transformationController: _controller,
-              minScale: 1,
-              maxScale: 10.0,
+              minScale: _minScale,
+              maxScale: _maxScale,
               scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
               constrained: false,
               boundaryMargin: const EdgeInsets.all(double.infinity),
@@ -154,8 +164,8 @@ class _MapDisplayState extends State<MapDisplay> {
               bottom: 25,
               child: MapControls(
                 onResetClicked: _reset,
-                onScaleChanged: (scale) {
-                  _setScale(scale);
+                onScaleChanged: (scale, min, max) {
+                  _setScale(scale, min, max);
                 },
               ),
             )
@@ -174,13 +184,15 @@ class MapControls extends StatefulWidget {
   });
 
   final void Function()? onResetClicked;
-  final void Function(double)? onScaleChanged;
+  final void Function(double, double, double)? onScaleChanged;
 
   @override
   State<StatefulWidget> createState() => _MapControlsState();
 }
 
 class _MapControlsState extends State<MapControls> {
+  static const double _min = 0.0;
+  static const double _max = 1.0;
   double _sliderValue = 0.5;
 
   @override
@@ -191,12 +203,14 @@ class _MapControlsState extends State<MapControls> {
         SizedBox(
           width: 150,
           child: Slider(
+            min: _min,
+            max: _max,
             value: _sliderValue,
             onChanged: (newValue) {
               setState(() {
                 _sliderValue = newValue;
               });
-              widget.onScaleChanged?.call(newValue);
+              widget.onScaleChanged?.call(newValue, _min, _max);
             },
           )
         ),
