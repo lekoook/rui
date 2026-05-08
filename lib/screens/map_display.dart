@@ -15,7 +15,15 @@ import 'package:vector_math/vector_math_64.dart' as math;
 Widget mapDisplay() {
   final rm = RobotModel();
   final vm = RobotStatusViewModel(robotModel: rm);
-  return MapDisplay(mapData: vm.currentMapNotifier.value, robotPose: PoseData());
+  return MapDisplay(
+    mapData: vm.currentMapNotifier.value,
+    mapMarkers: [
+      RobotMarker(
+        mapPoseNotifier: ValueNotifier(PoseData()),
+        mapData: MapData()
+      )
+    ]
+  );
 }
 
 class MapPainter extends CustomPainter {
@@ -47,11 +55,11 @@ class MapDisplay extends StatefulWidget {
   const MapDisplay({
     super.key,
     required this.mapData,
-    required this.robotPose
+    required this.mapMarkers
   });
 
   final MapData mapData;
-  final PoseData robotPose;
+  final List<MapMarker> mapMarkers;
 
   @override
   State<MapDisplay> createState() => _MapDisplayState();
@@ -76,22 +84,6 @@ class _MapDisplayState extends State<MapDisplay> {
   void _setScale(double scale) {
     // TODO: Implement.
     // throw UnimplementedError();
-  }
-
-  Offset _worldToMapPixel({
-    required double wx,
-    required double wy,
-    required double resolution,
-    required Offset origin,
-    required double mapHeight,
-  }) {
-    final px = (wx - origin.dx) / resolution;
-    final py = (wy - origin.dy) / resolution;
-
-    // flip ROS Y
-    final flippedY = mapHeight - py;
-
-    return Offset(px, flippedY);
   }
 
   @override
@@ -120,16 +112,7 @@ class _MapDisplayState extends State<MapDisplay> {
                     CustomPaint(
                       painter: MapPainter(mapImage: widget.mapData.mapImage),
                     ),
-                    RobotMapMarker(
-                      screenPosition: _worldToMapPixel(
-                        wx: widget.robotPose.posX,
-                        wy: widget.robotPose.posY,
-                        resolution: widget.mapData.resolution,
-                        origin: Offset(widget.mapData.origin.posX, widget.mapData.origin.posY),
-                        mapHeight: widget.mapData.height
-                      ),
-                      yaw: widget.robotPose.yaw()
-                    )
+                    ...widget.mapMarkers
                   ],
                 ),
               ),
@@ -231,31 +214,92 @@ class _MapControlsState extends State<MapControls> {
   }
 }
 
-class RobotMapMarker extends StatelessWidget {
-  const RobotMapMarker({
+class MapMarker extends StatelessWidget {
+  const MapMarker({
     super.key,
-    required this.screenPosition,
-    required this.yaw
+    required this.mapPoseNotifier,
+    required this.widget,
+    required this.mapData,
+    this.width = 20.0,
+    this.height = 20.0
   });
 
-  final Offset screenPosition;
-  final double yaw;
+  final ValueNotifier<PoseData> mapPoseNotifier;
+  final Widget widget;
+  final MapData mapData;
+  final double width;
+  final double height;
+
+  Offset _mapToScreenPixel({
+    required double mx,
+    required double my,
+    required double resolution,
+    required double originX,
+    required double originY,
+    required double mapHeight,
+  }) {
+    final px = resolution == 0.0 ? 0.0 : (mx - originX) / resolution;
+    final py = resolution == 0.0 ? 0.0 : (my - originY) / resolution;
+    // flip Y because in UI's convention, the Y axis runs downwards.
+    final flippedY = mapHeight - py;
+    return Offset(px, flippedY);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Positioned(
-      left: screenPosition.dx - 16,
-      top: screenPosition.dy - 16,
-      child: Transform.rotate(
-        angle: yaw,
-        child: const Icon(
-          Icons.navigation,
-          size: 32,
-          color: Colors.red,
-        ),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: mapPoseNotifier,
+      builder: (context, value, child) {
+        Offset screenPose = _mapToScreenPixel(
+          mx: value.posX,
+          my: value.posY,
+          resolution: mapData.resolution,
+          originX: mapData.origin.posX,
+          originY: mapData.origin.posY,
+          mapHeight: mapData.height
+        );
+        return Positioned(
+          left: screenPose.dx - width / 2,
+          top: screenPose.dy - height / 2,
+          child: Transform.rotate(
+            angle: value.yaw(),
+            child: SizedBox(
+              width: width,
+              height: height,
+              child: widget,
+            ),
+          ),
+        );
+      }
     );
   }
+}
+
+class RobotMarker extends MapMarker {
+  RobotMarker({
+    super.key,
+    required super.mapPoseNotifier,
+    required super.mapData,
+    double size = 20,
+    Color color = Colors.redAccent
+  }) : super(
+    widget: Transform.rotate(
+      angle: pi / 2.0,
+      child: Icon(Icons.navigation, color: color),
+    ),
+    width: size,
+    height: size
+  );
+}
+
+class HomeMarker extends MapMarker {
+  HomeMarker({
+    super.key,
+    required super.mapPoseNotifier,
+    required super.mapData,
+    double size = 20,
+    Color color = Colors.blueAccent
+  }) : super(widget: Icon(Icons.home, color: color), width: size, height: size);
 }
 
 class InteractiveMapView extends StatefulWidget {

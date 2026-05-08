@@ -185,15 +185,17 @@ class _RobotDashboard extends State<RobotDashboard> {
               borderRadius: BorderRadius.zero
             ),
             child: ClipRect(
-              child: AnimatedBuilder(
-                animation: Listenable.merge([
-                  widget.robotStatusViewModel.currentMapNotifier,
-                  widget.robotStatusViewModel.robotPoseNotifier,
-                ]),
+              child: ListenableBuilder(
+                listenable: widget.robotStatusViewModel.currentMapNotifier,
                 builder: (context, child) {
                   return MapDisplay(
                     mapData: widget.robotStatusViewModel.currentMapNotifier.value,
-                    robotPose: widget.robotStatusViewModel.robotPoseNotifier.value,
+                    mapMarkers: [
+                      RobotMarker(
+                        mapPoseNotifier: widget.robotStatusViewModel.robotPoseNotifier,
+                        mapData: widget.robotStatusViewModel.currentMapNotifier.value
+                      ),
+                    ],
                   );
                 },
               ),
