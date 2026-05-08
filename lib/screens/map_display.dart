@@ -8,6 +8,7 @@ import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
 import 'package:rui/screens/buttons.dart';
 import 'package:rui/screens/cards.dart';
+import 'package:rui/screens/map_marker_controller.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:vector_math/vector_math_64.dart' as math;
 
@@ -228,22 +229,27 @@ class _MapControlsState extends State<MapControls> {
   }
 }
 
-class MapMarker extends StatelessWidget {
+class MapMarker extends StatefulWidget {
   const MapMarker({
     super.key,
-    required this.mapPoseNotifier,
-    required this.widget,
+    required this.controller,
     required this.mapData,
+    required this.child,
     this.width = 20.0,
     this.height = 20.0
   });
 
-  final ValueNotifier<Pose> mapPoseNotifier;
-  final Widget widget;
+  final MapMarkerController controller;
   final MapData mapData;
+  final Widget child;
   final double width;
   final double height;
 
+  @override
+  State<StatefulWidget> createState() => _MapMarkerState();
+}
+
+class _MapMarkerState extends State<MapMarker> {
   Offset _mapToScreenPixel({
     required double mx,
     required double my,
@@ -261,26 +267,26 @@ class MapMarker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: mapPoseNotifier,
-      builder: (context, value, child) {
+    return ListenableBuilder(
+      listenable: widget.controller,
+      builder: (context, child) {
         Offset screenPose = _mapToScreenPixel(
-          mx: value.posX,
-          my: value.posY,
-          resolution: mapData.resolution,
-          originX: mapData.origin.posX,
-          originY: mapData.origin.posY,
-          mapHeight: mapData.height
+          mx: widget.controller.poseNotifier.value.posX,
+          my: widget.controller.poseNotifier.value.posY,
+          resolution: widget.mapData.resolution,
+          originX: widget.mapData.origin.posX,
+          originY: widget.mapData.origin.posY,
+          mapHeight: widget.mapData.height
         );
         return Positioned(
-          left: screenPose.dx - width / 2,
-          top: screenPose.dy - height / 2,
+          left: screenPose.dx - widget.width / 2,
+          top: screenPose.dy - widget.height / 2,
           child: Transform.rotate(
-            angle: -value.yaw,
+            angle: -widget.controller.poseNotifier.value.yaw,
             child: SizedBox(
-              width: width,
-              height: height,
-              child: widget,
+              width: widget.width,
+              height: widget.height,
+              child: widget.child,
             ),
           ),
         );
@@ -292,12 +298,17 @@ class MapMarker extends StatelessWidget {
 class RobotMarker extends MapMarker {
   RobotMarker({
     super.key,
-    required super.mapPoseNotifier,
     required super.mapData,
+    required ValueNotifier<Pose> mapPoseNotifier,
+    ValueNotifier<bool>? hiddenNotifier,
     double size = 20,
     Color color = Colors.redAccent
   }) : super(
-    widget: Transform.rotate(
+    controller: MapMarkerController(
+      poseNotifier: mapPoseNotifier,
+      hiddenNotifier: hiddenNotifier ?? ValueNotifier(false)
+    ),
+    child: Transform.rotate(
       angle: pi / 2.0,
       child: Icon(Icons.navigation, color: color),
     ),
@@ -309,11 +320,20 @@ class RobotMarker extends MapMarker {
 class HomeMarker extends MapMarker {
   HomeMarker({
     super.key,
-    required super.mapPoseNotifier,
     required super.mapData,
+    required ValueNotifier<Pose> mapPoseNotifier,
+    ValueNotifier<bool>? hiddenNotifier,
     double size = 20,
     Color color = Colors.blueAccent
-  }) : super(widget: Icon(Icons.home, color: color), width: size, height: size);
+  }) : super(
+    controller: MapMarkerController(
+      poseNotifier: mapPoseNotifier,
+      hiddenNotifier: hiddenNotifier ?? ValueNotifier(false)
+    ),
+    child: Icon(Icons.home, color: color),
+    width: size,
+    height: size
+  );
 }
 
 class InteractiveMapView extends StatefulWidget {
