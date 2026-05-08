@@ -4,8 +4,7 @@ import 'package:rui/data/data_types.dart';
 class MapMarkerController extends ChangeNotifier {
   MapMarkerController({
     required this.poseNotifier,
-    required this.hiddenNotifier,
-  }) {
+  }) : hiddenNotifier = ValueNotifier(false) {
     poseNotifier.addListener(() => notifyListeners());
     hiddenNotifier.addListener(() => notifyListeners());
   }

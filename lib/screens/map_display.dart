@@ -20,7 +20,7 @@ Widget mapDisplay() {
     mapData: vm.currentMapNotifier.value,
     mapMarkers: [
       RobotMarker(
-        mapPoseNotifier: ValueNotifier(Pose()),
+        poseNotifier: ValueNotifier(Pose()),
         mapData: MapData()
       )
     ]
@@ -166,6 +166,11 @@ class _MapDisplayState extends State<MapDisplay> {
                 onScaleChanged: (scale, min, max) {
                   _setScale(scale, min, max);
                 },
+                onHiddenChanged: (hidden) {
+                  for (var marker in widget.mapMarkers) {
+                    marker.setHidden(hidden);
+                  }
+                },
               ),
             )
           ],
@@ -179,11 +184,13 @@ class MapControls extends StatefulWidget {
   const MapControls({
     this.onResetClicked,
     this.onScaleChanged,
+    this.onHiddenChanged,
     super.key
   });
 
   final void Function()? onResetClicked;
   final void Function(double, double, double)? onScaleChanged;
+  final void Function(bool)? onHiddenChanged;
 
   @override
   State<StatefulWidget> createState() => _MapControlsState();
@@ -193,6 +200,7 @@ class _MapControlsState extends State<MapControls> {
   static const double _min = 0.0;
   static const double _max = 1.0;
   double _sliderValue = 0.5;
+  final _markersHidden = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +230,23 @@ class _MapControlsState extends State<MapControls> {
             onPressed: widget.onResetClicked?.call,
           ),
         ),
+        ValueListenableBuilder(
+          valueListenable: _markersHidden,
+          builder: (context, hidden, child) {
+            return ShadTooltip(
+              child: ShadIconButton.secondary(
+                icon: Icon(_markersHidden.value ? Icons.visibility_off : Icons.visibility),
+                onPressed: () {
+                  _markersHidden.value = !_markersHidden.value;
+                  widget.onHiddenChanged?.call(_markersHidden.value);
+                },
+              ),
+              builder: (context) {
+                return _markersHidden.value ? Text('Set markers visible') : Text('Set markers hidden');
+              }
+            );
+          }
+        )
       ],
     );
   }
@@ -245,6 +270,10 @@ class MapMarker extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() => _MapMarkerState();
+
+  void setHidden(bool hidden) {
+    controller.hiddenNotifier.value = hidden;
+  }
 }
 
 class _MapMarkerState extends State<MapMarker> {
@@ -268,6 +297,9 @@ class _MapMarkerState extends State<MapMarker> {
     return ListenableBuilder(
       listenable: widget.controller,
       builder: (context, child) {
+        if (widget.controller.hiddenNotifier.value) {
+          return Container();
+        }
         Offset screenPose = _mapToScreenPixel(
           mx: widget.controller.poseNotifier.value.posX,
           my: widget.controller.poseNotifier.value.posY,
@@ -297,14 +329,12 @@ class RobotMarker extends MapMarker {
   RobotMarker({
     super.key,
     required super.mapData,
-    required ValueNotifier<Pose> mapPoseNotifier,
-    ValueNotifier<bool>? hiddenNotifier,
+    required ValueNotifier<Pose> poseNotifier,
     double size = 20,
     Color color = Colors.redAccent
   }) : super(
     controller: MapMarkerController(
-      poseNotifier: mapPoseNotifier,
-      hiddenNotifier: hiddenNotifier ?? ValueNotifier(false)
+      poseNotifier: poseNotifier,
     ),
     child: Transform.rotate(
       angle: pi / 2.0,
@@ -319,14 +349,13 @@ class HomeMarker extends MapMarker {
   HomeMarker({
     super.key,
     required super.mapData,
-    required ValueNotifier<Pose> mapPoseNotifier,
+    required ValueNotifier<Pose> poseNotifier,
     ValueNotifier<bool>? hiddenNotifier,
     double size = 20,
     Color color = Colors.blueAccent
   }) : super(
     controller: MapMarkerController(
-      poseNotifier: mapPoseNotifier,
-      hiddenNotifier: hiddenNotifier ?? ValueNotifier(false)
+      poseNotifier: poseNotifier,
     ),
     child: Icon(Icons.home, color: color),
     width: size,
