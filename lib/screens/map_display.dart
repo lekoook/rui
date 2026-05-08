@@ -19,7 +19,7 @@ Widget mapDisplay() {
     mapData: vm.currentMapNotifier.value,
     mapMarkers: [
       RobotMarker(
-        mapPoseNotifier: ValueNotifier(PoseData()),
+        mapPoseNotifier: ValueNotifier(Pose()),
         mapData: MapData()
       )
     ]
@@ -238,7 +238,7 @@ class MapMarker extends StatelessWidget {
     this.height = 20.0
   });
 
-  final ValueNotifier<PoseData> mapPoseNotifier;
+  final ValueNotifier<Pose> mapPoseNotifier;
   final Widget widget;
   final MapData mapData;
   final double width;
@@ -276,7 +276,7 @@ class MapMarker extends StatelessWidget {
           left: screenPose.dx - width / 2,
           top: screenPose.dy - height / 2,
           child: Transform.rotate(
-            angle: value.yaw(),
+            angle: -value.yaw,
             child: SizedBox(
               width: width,
               height: height,

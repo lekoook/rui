@@ -124,11 +124,11 @@ class LocationLabel extends TextLabel {
     super.style,
     super.key
   }) : super(
-    text: '${locationData.posX}, ${locationData.posY}, ${locationData.yaw()}',
+    text: locationData.toString2D(),
     color: Colors.transparent
   );
 
-  final PoseData locationData;
+  final Pose locationData;
 }
 
 class BatteryStateLabel extends IconLabel {

@@ -97,17 +97,17 @@ class BatteryState {
   factory BatteryState.fromJson(Map<String, dynamic> json) {
     return BatteryState(
       location: json['location'],
-      serialNumber: json['serialNumber'],
+      serialNumber: json['serial_number'],
       voltage: json['voltage'],
       temperature: json['temperature'],
       current: json['current'],
       charge: json['charge'],
       capacity: json['capacity'],
-      designCapacity: json['designCapacity'],
+      designCapacity: json['design_capacity'],
       percentage: json['percentage'],
-      powerStatus: BatteryPowerStatus.fromIndex(json['powerStatus']),
-      powerHealth: BatteryPowerHealth.fromIndex(json['powerHealth']),
-      powerTechnology: BatteryPowerTech.fromIndex(json['powerTechnology']),
+      powerStatus: BatteryPowerStatus.fromIndex(json['power_supply_status']),
+      powerHealth: BatteryPowerHealth.fromIndex(json['power_supply_health']),
+      powerTechnology: BatteryPowerTech.fromIndex(json['power_supply_technology']),
     );
   }
 
@@ -126,42 +126,6 @@ class BatteryState {
   final BatteryPowerTech powerTechnology;
   final List<double> cellVoltage;
   final List<double> cellTemperature;
-}
-
-class PoseData {
-  const PoseData({
-    this.posX = 0.0,
-    this.posY = 0.0,
-    this.posZ = 0.0,
-    this.oriW = 0.0,
-    this.oriX = 0.0,
-    this.oriY = 0.0,
-    this.oriZ = 0.0
-  });
-
-  factory PoseData.fromJson(Map<String, dynamic> json) {
-    return PoseData(
-      posX: json['posX'],
-      posY: json['posY'],
-      posZ: json['posZ'],
-      oriW: json['oriW'],
-      oriX: json['oriX'],
-      oriY: json['oriY'],
-      oriZ: json['oriZ'],
-    );
-  }
-
-  final double posX;
-  final double posY;
-  final double posZ;
-  final double oriW;
-  final double oriX;
-  final double oriY;
-  final double oriZ;
-
-  double yaw() {
-    return 0;
-  }
 }
 
 class Pose {
@@ -189,13 +153,25 @@ class Pose {
     return atan2(2 * (oriW * oriZ + oriX * oriY), 1 - 2 * (oriY * oriY + oriZ * oriZ));
   }
 
+  factory Pose.fromJson(Map<String, dynamic> json) {
+    return Pose(
+      posX: json['pose']['pose']['position']['x'],
+      posY: json['pose']['pose']['position']['y'],
+      posZ: json['pose']['pose']['position']['z'],
+      oriW: json['pose']['pose']['orientation']['w'],
+      oriX: json['pose']['pose']['orientation']['x'],
+      oriY: json['pose']['pose']['orientation']['y'],
+      oriZ: json['pose']['pose']['orientation']['z'],
+    );
+  }
+
   @override
   String toString() {
-    return 'px: $posX, py: $posY, pz: $posZ, ow: $oriW, ox: $oriX, oy: $oriY, oz: $oriZ';
+    return 'px: ${posX.toStringAsFixed(3)}, py: ${posY.toStringAsFixed(3)}, pz: ${posZ.toStringAsFixed(3)}, ow: ${oriW.toStringAsFixed(3)}, ox: ${oriX.toStringAsFixed(3)}, oy: ${oriY.toStringAsFixed(3)}, oz: ${oriZ.toStringAsFixed(3)}';
   }
 
   String toString2D() {
-    return 'px: $posX, py: $posY, yaw: $yaw';
+    return 'px: ${posX.toStringAsFixed(3)},\npy: ${posY.toStringAsFixed(3)},\nyaw: ${yaw.toStringAsFixed(3)}';
   }
 }
 

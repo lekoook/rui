@@ -22,7 +22,7 @@ class RobotStatusViewModel {
   ValueNotifier<RobotConnectionStatus> get connectionNotifier => _robotModel.connectionStatus;
   ValueNotifier<BatteryState> get batteryStateNotifier => _robotModel.batteryState;
   ValueNotifier<AutonomyStatus> get autonomyNotifier => _autonomyNotifier;
-  ValueNotifier<PoseData> get robotPoseNotifier => _robotModel.robotPose;
+  ValueNotifier<Pose> get robotPoseNotifier => _robotModel.robotPose;
   ValueNotifier<MapData> get currentMapNotifier => _currentMapNotifier;
   ui.Image? get currentMapImage => _currentMapNotifier.value.mapImage;
 
