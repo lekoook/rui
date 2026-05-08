@@ -8,7 +8,7 @@ class MapMarkerController extends ChangeNotifier {
     poseNotifier.addListener(() => notifyListeners());
     hiddenNotifier.addListener(() => notifyListeners());
   }
-  
+
   final ValueNotifier<Pose> poseNotifier;
   final ValueNotifier<bool> hiddenNotifier;
 }

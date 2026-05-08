@@ -259,7 +259,8 @@ class MapMarker extends StatefulWidget {
     required this.mapData,
     required this.child,
     this.width = 20.0,
-    this.height = 20.0
+    this.height = 20.0,
+    this.tooltip
   });
 
   final MapMarkerController controller;
@@ -267,6 +268,7 @@ class MapMarker extends StatefulWidget {
   final Widget child;
   final double width;
   final double height;
+  final String? tooltip;
 
   @override
   State<StatefulWidget> createState() => _MapMarkerState();
@@ -311,14 +313,17 @@ class _MapMarkerState extends State<MapMarker> {
         return Positioned(
           left: screenPose.dx - widget.width / 2,
           top: screenPose.dy - widget.height / 2,
-          child: Transform.rotate(
-            angle: -widget.controller.poseNotifier.value.yaw,
-            child: SizedBox(
-              width: widget.width,
-              height: widget.height,
-              child: widget.child,
+          child: Tooltip(
+            message: widget.tooltip ?? '',
+            child: Transform.rotate(
+              angle: -widget.controller.poseNotifier.value.yaw,
+              child: SizedBox(
+                width: widget.width,
+                height: widget.height,
+                child: widget.child,
+              )
             ),
-          ),
+          )
         );
       }
     );
@@ -341,7 +346,8 @@ class RobotMarker extends MapMarker {
       child: Icon(Icons.navigation, color: color),
     ),
     width: size,
-    height: size
+    height: size,
+    tooltip: 'Robot'
   );
 }
 
