@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui' as ui;
 
 enum RobotConnectionStatus {
@@ -182,12 +183,11 @@ class Pose {
   final double oriY;
   final double oriZ;
 
-  double _yaw() {
-    // TODO: Calculate yaw.
-    return 0;
-  }
+  double get yaw => _getYaw();
 
-  double get yaw => _yaw();
+  double _getYaw() {
+    return atan2(2 * (oriW * oriZ + oriX * oriY), 1 - 2 * (oriY * oriY + oriZ * oriZ));
+  }
 
   @override
   String toString() {
@@ -195,7 +195,7 @@ class Pose {
   }
 
   String toString2D() {
-    return 'px: $posX, py: $posY, yaw: ${_yaw()}';
+    return 'px: $posX, py: $posY, yaw: $yaw';
   }
 }
 
