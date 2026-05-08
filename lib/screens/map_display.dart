@@ -88,8 +88,6 @@ class _MapDisplayState extends State<MapDisplay> {
     // Normalize the given scale to the display's range.
     final norm = (scale - min) / (max - min);
     final scaleToUse = norm * (_maxScale - _minScale) + _minScale;
-    final x = _controller.value.storage[12];
-    final y = _controller.value.storage[13];
     final dx = (_mapConstraints.maxWidth - widget.mapData.width * scaleToUse) / 2;
     final dy = (_mapConstraints.maxHeight - widget.mapData.height * scaleToUse) / 2;
     _controller.value = Matrix4.identity()
@@ -334,78 +332,4 @@ class HomeMarker extends MapMarker {
     width: size,
     height: size
   );
-}
-
-class InteractiveMapView extends StatefulWidget {
-  final Widget child;
-
-  const InteractiveMapView({super.key, required this.child});
-
-  @override
-  State<InteractiveMapView> createState() => _InteractiveMapViewState();
-}
-
-class _InteractiveMapViewState extends State<InteractiveMapView> {
-  double scale = 1.0;
-  Offset pan = Offset.zero;
-
-  // for pinch zoom
-  double _startScale = 1.0;
-  Offset _startPan = Offset.zero;
-  Offset _focalPoint = Offset.zero;
-
-  @override
-  Widget build(BuildContext context) {
-    return Listener(
-      onPointerSignal: _handlePointerSignal, // trackpad zoom
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onScaleStart: (details) {
-          _startScale = scale;
-          _startPan = pan;
-          _focalPoint = details.focalPoint;
-        },
-        onScaleUpdate: (details) {
-          _handleScaleUpdate(details);
-        },
-        child: Transform(
-          transform: Matrix4.identity()
-            ..translateByVector3(math.Vector3(pan.dx, pan.dy, 0.0))
-            ..scaleByVector3(math.Vector3(scale, scale, scale)),
-          child: widget.child,
-        ),
-      ),
-    );
-  }
-
-  // Trackpad / mouse wheel zoom
-  void _handlePointerSignal(PointerSignalEvent event) {
-    if (event is PointerScrollEvent) {
-      final zoomDelta = -event.scrollDelta.dy * 0.001;
-      final newScale = (scale * (1 + zoomDelta)).clamp(0.1, 10.0);
-
-      // Zoom around cursor position
-      final localPosition = event.localPosition;
-      final scaleChange = newScale / scale;
-
-      setState(() {
-        pan = (pan - localPosition) * scaleChange + localPosition;
-        scale = newScale;
-      });
-    }
-  }
-
-  // Pinch + drag handling
-  void _handleScaleUpdate(ScaleUpdateDetails details) {
-    final newScale = (_startScale * details.scale).clamp(0.1, 10.0);
-
-    // keep focal point stable during zoom
-    final focalDelta = details.focalPoint - _focalPoint;
-    final scaleChange = newScale / scale;
-
-    setState(() {
-      pan = (_startPan + focalDelta - _focalPoint) * scaleChange + _focalPoint;
-      scale = newScale;
-    });
-  }
 }
