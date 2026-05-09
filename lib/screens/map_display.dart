@@ -112,7 +112,7 @@ class _MapDisplayState extends State<MapDisplay> {
               maxScale: _maxScale,
               scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
               constrained: false,
-              boundaryMargin: const EdgeInsets.all(double.infinity),
+              boundaryMargin: EdgeInsets.all(min(widget.mapData.width, widget.mapData.height) * 0.5),
               child: SizedBox(
                 width: widget.mapData.width,
                 height: widget.mapData.height,
