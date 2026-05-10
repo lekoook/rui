@@ -130,6 +130,7 @@ void _fitToScreen() {
           LayoutBuilder(
             builder: (context, constraints) {
               _viewerConstraints = constraints;
+              _fitToScreen();
           return InteractiveViewer(
             transformationController: _transformController,
             minScale: _minScale,
