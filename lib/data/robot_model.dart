@@ -22,6 +22,7 @@ class RobotModel {
     'robot_pose' : _onRobotPose,
   };
 
+  String get robotName => 'Robot Name';
   ValueNotifier<RobotConnectionStatus> get connectionStatus => _connectionStatus;
   ValueNotifier<BatteryState> get batteryState => _batteryState;
   ValueNotifier<Pose> get robotPose => _robotPose;

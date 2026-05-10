@@ -19,6 +19,8 @@ class RobotStatusViewModel {
   final ValueNotifier<MapData> _currentMapNotifier;
 
   RobotModel get robotMode => _robotModel;
+  String get robotName => _robotModel.robotName;
+  double get batteryPercentage => _robotModel.batteryState.value.percentage;
   ValueNotifier<RobotConnectionStatus> get connectionNotifier => _robotModel.connectionStatus;
   ValueNotifier<BatteryState> get batteryStateNotifier => _robotModel.batteryState;
   ValueNotifier<AutonomyStatus> get autonomyNotifier => _autonomyNotifier;
