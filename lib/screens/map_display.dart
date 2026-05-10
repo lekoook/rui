@@ -130,64 +130,64 @@ void _fitToScreen() {
           LayoutBuilder(
             builder: (context, constraints) {
               _viewerConstraints = constraints;
-              _fitToScreen();
-          return InteractiveViewer(
-            transformationController: _transformController,
-            minScale: _minScale,
-            maxScale: _maxScale,
-            scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
-            constrained: false,
-            boundaryMargin: EdgeInsets.all(min(widget.mapData.width, widget.mapData.height) * 0.5),
-            onInteractionEnd:(details) {
-              _selectedScaleNotifier.value = _transformController.value.getMaxScaleOnAxis();
-            },
-            child: SizedBox(
-              width: widget.mapData.width,
-              height: widget.mapData.height,
-              child: Stack(
-                children: [
-                  CustomPaint(
-                    size: Size(widget.mapData.width, widget.mapData.height),
-                    painter: _MapPainter(mapImage: widget.mapData.mapImage),
-                  ),
-                  ...widget.mapMarkers.map((marker) {
-                    return ValueListenableBuilder(
-                      valueListenable: marker.pose,
-                      builder: (context, value, child) {
-                        Offset pos = _worldToMap(
-                          mx: value.posX,
-                          my: value.posY,
-                          resolution: widget.mapData.resolution,
-                          originX: widget.mapData.origin.posX,
-                          originY: widget.mapData.origin.posY,
-                          mapHeight: widget.mapData.height
-                        );
-                        return Positioned(
-                          left: pos.dx - marker.width / 2.0,
-                          top: pos.dy - marker.height / 2.0,
-                          child: CompositedTransformTarget(
-                            link: marker.layerLink,
-                            child: Transform.rotate(
-                              angle: -marker.pose.value.yaw,
-                              child: _InteractiveViewMarker(
-                                mapData: widget.mapData,
-                                marker: marker.marker,
-                                width: marker.width,
-                                height: marker.height,
-                                hiddenNotifier: marker.hiddenNotifier,
-                                onTap: (){},
-                                onSecondaryTapDown:(details) {},
+              WidgetsBinding.instance.addPostFrameCallback((_) => _fitToScreen());
+              return InteractiveViewer(
+                transformationController: _transformController,
+                minScale: _minScale,
+                maxScale: _maxScale,
+                scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
+                constrained: false,
+                boundaryMargin: EdgeInsets.all(min(widget.mapData.width, widget.mapData.height) * 0.5),
+                onInteractionEnd:(details) {
+                  _selectedScaleNotifier.value = _transformController.value.getMaxScaleOnAxis();
+                },
+                child: SizedBox(
+                  width: widget.mapData.width,
+                  height: widget.mapData.height,
+                  child: Stack(
+                    children: [
+                      CustomPaint(
+                        size: Size(widget.mapData.width, widget.mapData.height),
+                        painter: _MapPainter(mapImage: widget.mapData.mapImage),
+                      ),
+                      ...widget.mapMarkers.map((marker) {
+                        return ValueListenableBuilder(
+                          valueListenable: marker.pose,
+                          builder: (context, value, child) {
+                            Offset pos = _worldToMap(
+                              mx: value.posX,
+                              my: value.posY,
+                              resolution: widget.mapData.resolution,
+                              originX: widget.mapData.origin.posX,
+                              originY: widget.mapData.origin.posY,
+                              mapHeight: widget.mapData.height
+                            );
+                            return Positioned(
+                              left: pos.dx - marker.width / 2.0,
+                              top: pos.dy - marker.height / 2.0,
+                              child: CompositedTransformTarget(
+                                link: marker.layerLink,
+                                child: Transform.rotate(
+                                  angle: -marker.pose.value.yaw,
+                                  child: _InteractiveViewMarker(
+                                    mapData: widget.mapData,
+                                    marker: marker.marker,
+                                    width: marker.width,
+                                    height: marker.height,
+                                    hiddenNotifier: marker.hiddenNotifier,
+                                    onTap: (){},
+                                    onSecondaryTapDown:(details) {},
+                                  )
+                                )
                               )
-                            )
-                          )
+                            );
+                          }
                         );
-                      }
-                    );
-                  })
-                ],
-              ),
-            ),
-          );
+                      })
+                    ],
+                  ),
+                ),
+              );
             }
           ),
           // LIGHTWEIGHT OVERLAY LAYER
