@@ -130,7 +130,6 @@ void _fitToScreen() {
           LayoutBuilder(
             builder: (context, constraints) {
               _viewerConstraints = constraints;
-              WidgetsBinding.instance.addPostFrameCallback((_) => _fitToScreen());
               return InteractiveViewer(
                 transformationController: _transformController,
                 minScale: _minScale,
