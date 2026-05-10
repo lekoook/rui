@@ -11,7 +11,8 @@ class MapMarker {
     required this.marker,
     required this.pose,
     required this.width,
-    required this.height
+    required this.height,
+    this.popoverWidget
   });
 
   final LayerLink layerLink = LayerLink();
@@ -19,6 +20,7 @@ class MapMarker {
   final ValueNotifier<Pose> pose;
   final double width;
   final double height;
+  final Widget? popoverWidget;
   final ValueNotifier<bool> hiddenNotifier = ValueNotifier(false);
 }
 
@@ -34,6 +36,17 @@ class RobotMarker extends MapMarker {
     ),
     width: size,
     height: size,
+    popoverWidget: SizedBox(
+      width: 300,
+      height: 300,
+      child: Column(
+        children: [
+          // TODO: Create popover widget.
+          // Text('Title'),
+          // Text('Description')
+        ],
+      ),
+    )
   );
 }
 
@@ -200,8 +213,11 @@ void _fitToScreen() {
                       return CompositedTransformFollower(
                         link: marker.layerLink,
                         child: _OverlayMarker(
+                          popoverWidget: marker.popoverWidget,
                           width: marker.width,
-                          height: marker.height
+                          height: marker.height,
+                          onTap: () {},
+                          onSecondaryTap: () {},
                         ),
                       );
                     }),
@@ -436,27 +452,49 @@ class _InteractiveViewMarkerState extends State<_InteractiveViewMarker> {
 
 class _OverlayMarker extends StatefulWidget {
   const _OverlayMarker({
+    this.popoverWidget,
     required this.width,
     required this.height,
+    required this.onTap,
+    required this.onSecondaryTap,
   });
 
+  final Widget? popoverWidget;
   final double width;
   final double height;
+  final VoidCallback onTap;
+  final VoidCallback onSecondaryTap;
 
   @override
   State<StatefulWidget> createState() => _OverlayMarkerState();
 }
 
 class _OverlayMarkerState extends State<_OverlayMarker> {
+  final _popoverController = ShadPopoverController();
+
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
       hitTestBehavior: HitTestBehavior.translucent,
       opaque: false,
       child: GestureDetector(
+        onTap: () {
+          if (widget.popoverWidget != null) {
+            _popoverController.toggle();
+          }
+          widget.onTap();
+        },
+        onSecondaryTap: widget.onSecondaryTap,
         child: SizedBox(
           width: widget.width,
-          height: widget.height
+          height: widget.height,
+          child: ShadPopover(
+            controller: _popoverController,
+            popover: (context) {
+              return widget.popoverWidget ?? SizedBox();
+            },
+            child: Text(''),
+          ),
         ),
       ),
     );
