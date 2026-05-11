@@ -93,7 +93,7 @@ class MapInfoCard extends TableInfoCard {
     ]
   );
 
-  final MapData mapData;
+  final MapInfo mapData;
 }
 
 class RobotConnectionCard extends StatefulWidget {

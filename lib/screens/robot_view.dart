@@ -194,7 +194,7 @@ class _RobotDashboard extends State<RobotDashboard> {
                   return MapDisplay(
                     mapData: widget.robotStatusViewModel.currentMapNotifier.value,
                     mapMarkers: [
-                      HomeMarker(pose: ValueNotifier(Pose())), // TODO: Temp.
+                      HomeMarker(pose: ValueNotifier(widget.robotStatusViewModel.currentMapNotifier.value.home)), // TODO: Temp.
                       RobotMarker(pose: widget.robotStatusViewModel.robotPoseNotifier),
                     ],
                   );

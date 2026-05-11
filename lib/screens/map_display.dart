@@ -69,7 +69,7 @@ class MapDisplay extends StatefulWidget {
     required this.mapMarkers,
   });
 
-  final MapData mapData;
+  final MapInfo mapData;
   final List<MapMarker> mapMarkers;
 
   @override
@@ -386,7 +386,7 @@ class _InteractiveViewMarker extends StatefulWidget {
     required this.onSecondaryTapDown,
   });
 
-  final MapData mapData;
+  final MapInfo mapData;
   final Widget marker;
   final double width;
   final double height;

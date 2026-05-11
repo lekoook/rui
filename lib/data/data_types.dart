@@ -175,10 +175,11 @@ class Pose {
   }
 }
 
-class MapData {
-  const MapData({
+class MapInfo {
+  const MapInfo({
     this.name = '',
     this.description = '',
+    this.home = const Pose(),
     this.resolution = 0.0,
     this.width = 0.0,
     this.height = 0.0,
@@ -188,9 +189,24 @@ class MapData {
 
   final String name;
   final String description;
+  final Pose home;
   final double resolution;
   final double width;
   final double height;
   final Pose origin;
   final ui.Image? mapImage;
+
+  factory MapInfo.fromJson(Map<String, dynamic> json) {
+    return MapInfo(
+      name: json['name'],
+      description: json['description'],
+      home: Pose.fromJson(json['home']),
+      // TODO: Implement on ROS side.
+      // resolution: json['resolution'],
+      // width: json['width'],
+      // height: json['height'],
+      // origin: Pose.fromJson(json['origin']),
+      // mapImage: json['mapImage'],
+    );
+  }
 }

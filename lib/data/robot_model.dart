@@ -16,10 +16,12 @@ class RobotModel {
   final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
   final _batteryState = ValueNotifier(BatteryState());
   final _robotPose = ValueNotifier(Pose());
+  final _currentMap = ValueNotifier(MapInfo());
 
   late final _eventsMap = {
     'battery_state' : _onBatteryState,
     'robot_pose' : _onRobotPose,
+    'current_map' : _onCurrentMap,
   };
 
   String get robotName => 'Robot Name';
@@ -84,6 +86,18 @@ class RobotModel {
     }
   }
 
+  void _onCurrentMap(web.MessageEvent event) {
+    final str = event.data.toString();
+    try {
+      final decoded = jsonDecode(str);
+      _currentMap.value = MapInfo.fromJson(decoded);
+    } on FormatException catch (e) {
+      print('current_map event invalid JSON: ${e.message}\n$str');
+    } catch (e) {
+      print('current_map event unexpected JSON error: $e');
+    }
+  }
+
   Future<bool> connect(String host, int port) async {
     final eventSourceUri = Uri(scheme: 'http', host: host, port: port, path: 'events');
     return _connectEventSource(eventSourceUri.toString());
@@ -94,7 +108,7 @@ class RobotModel {
     _connectionStatus.value = RobotConnectionStatus.disconnected;
   }
 
-  Future<MapData?> getCurrentMap() async {
+  Future<MapInfo?> getCurrentMap() async {
     // TODO: Temp.
     final asset = 'test_map.png';
     final data = await rootBundle.load(asset);
@@ -102,7 +116,7 @@ class RobotModel {
     final codec = await instantiateImageCodec(bytes);
     final frame = await codec.getNextFrame();
 
-    return MapData(
+    return MapInfo(
       name: 'test_map',
       resolution: 0.05,
       width: 1350,
