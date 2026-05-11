@@ -28,13 +28,17 @@ class RobotStatusViewModel {
   ValueNotifier<MapData> get currentMapNotifier => _currentMapNotifier;
   ui.Image? get currentMapImage => _currentMapNotifier.value.mapImage;
 
-  void connectToRobot(String url) {
-    _robotModel.connect(url)
+  void connectToRobot(String host, int port) {
+    _robotModel.connect(host, port)
       .then((success) {
         // Do nothing for now.
       }).catchError((error) {
         print('[RobotStatusViewModel.connectToRobot]: $error');
       });
+  }
+
+  void disconnectRobot() {
+    _robotModel.disconnect();
   }
 
   void dispose() {

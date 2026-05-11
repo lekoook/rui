@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -7,7 +8,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 Widget robotConnectionCard() {
   return ShadApp(
     home: RobotConnectionCard(
-      onConnectPressed: (url) {},
+      onConnectPressed: (host, port) {},
       onCancelPressed: () {}
     )
   );
@@ -103,7 +104,7 @@ class RobotConnectionCard extends StatefulWidget {
     this.doneNotifier
   });
 
-  final Function(String)? onConnectPressed;
+  final Function(String, int)? onConnectPressed;
   final Function()? onCancelPressed;
   final ValueNotifier? doneNotifier;
 
@@ -113,6 +114,8 @@ class RobotConnectionCard extends StatefulWidget {
 
 class _RobotConnectionCardState extends State<RobotConnectionCard> {
   final _formKey = GlobalKey<ShadFormState>();
+  final _hostPattern = RegExp(r'^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)+([A-Za-z]|[A-Za-z][A-Za-z0-9\-]*[A-Za-z0-9])$');
+  final _portPattern = RegExp(r'^((6553[0-5])|(655[0-2][0-9])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4}))$');
 
   @override
   Widget build(BuildContext context) {
@@ -121,26 +124,40 @@ class _RobotConnectionCardState extends State<RobotConnectionCard> {
       child: ShadForm(
         key: _formKey,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 350, maxHeight: 250),
+          constraints: const BoxConstraints(maxWidth: 350, maxHeight: 300),
           child: Column(
+            spacing: 4,
             children: [
               ShadInputFormField(
                 id: 'address',
                 label: const Text('Address'),
                 placeholder: const Text('Enter address'),
                 description: const Text('Robot\'s address for connection.'),
-                initialValue: 'http://localhost:4280/events', // TODO: Temporary
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Cannot be empty.';
-                  }
-                  final uri = Uri.tryParse(value);
-                  if (uri == null) {
-                    return 'Not a valid URL address.';
+                initialValue: 'localhost',
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (host) {
+                  if (!_hostPattern.hasMatch(host) && host != 'localhost') {
+                    return 'Invalid host address.';
                   }
                   return null;
                 },
               ),
+              ShadInputFormField(
+                id: 'port',
+                label: const Text('Port'),
+                placeholder: const Text('Enter port'),
+                description: const Text('Robot\'s port for connection.'),
+                initialValue: '80',
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (port) {
+                  if (!_portPattern.hasMatch(port)) {
+                    return 'Not a valid port number.';
+                  }
+                  return null;
+                },
+                // inputFormatters: [FilteringTextInputFormatter.allow(_portPattern)],
+              ),
+              Expanded(child: Container()),
               Row(
                 children: [
                   ShadButton.secondary(
@@ -151,9 +168,10 @@ class _RobotConnectionCardState extends State<RobotConnectionCard> {
                   ShadButton(
                     onPressed: () {
                       if (_formKey.currentState!.saveAndValidate()) {
-                        widget.onConnectPressed?.call(_formKey.currentState!.value['address']);
-                        if (widget.doneNotifier != null) {
-                        }
+                        widget.onConnectPressed?.call(
+                          _formKey.currentState!.value['address'],
+                          int.parse(_formKey.currentState!.value['port'])
+                        );
                       }
                     },
                     child: const Text('Connect'),

@@ -27,6 +27,39 @@ class RobotModel {
   ValueNotifier<BatteryState> get batteryState => _batteryState;
   ValueNotifier<Pose> get robotPose => _robotPose;
 
+  Future<bool> _connectEventSource(String url) {
+    final completer = Completer<bool>();
+    _eventSource = web.EventSource(url);
+    _eventSource.onOpen.first.then((_) {
+      if (!completer.isCompleted) {
+        if (_eventSource.readyState == web.EventSource.OPEN) {
+          _connectionStatus.value = RobotConnectionStatus.connected;
+          completer.complete(true);
+        } else {
+          _connectionStatus.value = RobotConnectionStatus.disconnected;
+          completer.complete(false);
+        }
+      }
+    });
+    _eventSource.onError.first.then((error) {
+      if (!completer.isCompleted) {
+        _connectionStatus.value = RobotConnectionStatus.disconnected;
+        completer.completeError(ConnectError.sseError);
+      }
+    });
+    _eventSource.onError.listen((error) {
+      _eventSource.close();
+      _connectionStatus.value = RobotConnectionStatus.disconnected;
+    });
+    _eventsMap.forEach((k, v) {
+      _eventSource.addEventListener(k, (web.Event event) {
+        final message = event as web.MessageEvent;
+        v(message);
+      }.toJS);
+    });
+    return completer.future;
+  }
+
   void _onBatteryState(web.MessageEvent event) {
     final str = event.data.toString();
     try {
@@ -51,45 +84,14 @@ class RobotModel {
     }
   }
 
-  Future<bool> connect(String url) async {
-    final completer = Completer<bool>();
-    _eventSource = web.EventSource(url);
-
-    _eventSource.onOpen.first.then((_) {
-      if (!completer.isCompleted) {
-        if (_eventSource.readyState == web.EventSource.OPEN) {
-          _connectionStatus.value = RobotConnectionStatus.connected;
-          completer.complete(true);
-        } else {
-          _connectionStatus.value = RobotConnectionStatus.disconnected;
-          completer.complete(false);
-        }
-      }
-    });
-
-    _eventSource.onError.first.then((error) {
-      if (!completer.isCompleted) {
-        _connectionStatus.value = RobotConnectionStatus.disconnected;
-        completer.completeError(ConnectError.sseError);
-      }
-    });
-    _eventSource.onError.listen((error) {
-      _eventSource.close();
-      _connectionStatus.value = RobotConnectionStatus.disconnected;
-    });
-
-    _eventsMap.forEach((k, v) {
-      _eventSource.addEventListener(k, (web.Event event) {
-        final message = event as web.MessageEvent;
-        v(message);
-      }.toJS);
-    });
-
-    return completer.future;
+  Future<bool> connect(String host, int port) async {
+    final eventSourceUri = Uri(scheme: 'http', host: host, port: port, path: 'events');
+    return _connectEventSource(eventSourceUri.toString());
   }
 
   void disconnect() {
     _eventSource.close();
+    _connectionStatus.value = RobotConnectionStatus.disconnected;
   }
 
   Future<MapData?> getCurrentMap() async {

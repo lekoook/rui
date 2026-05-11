@@ -99,8 +99,11 @@ class RobotHeaderView extends StatelessWidget {
               child: Text('Robot Command & Control'),
             ),
             ConnectRobotPopover(
-              onConnectPressed: (url) {
-                robotStatusViewModel.connectToRobot(url);
+              onConnectPressed: (host, port) {
+                robotStatusViewModel.connectToRobot(host, port);
+              },
+              onDisconnectPressed: () {
+                robotStatusViewModel.disconnectRobot();
               },
               onCancelPressed: () {},
               connectedNotifier: robotStatusViewModel.connectionNotifier,
