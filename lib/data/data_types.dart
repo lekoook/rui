@@ -9,6 +9,20 @@ enum RobotConnectionStatus {
   final String label;
 }
 
+enum MapMode {
+  localization(0, 'Localization'),
+  mapping(1, 'Mapping');
+  const MapMode(this.idx, this.label);
+  factory MapMode.fromIndex(int idx) {
+    return values.firstWhere(
+      (e) => e.idx == idx,
+      orElse: () => MapMode.localization
+    );
+  }
+  final int idx;
+  final String label;
+}
+
 enum AutonomyStatus {
   unknown('Unknown'),
   manual('Manual'),
@@ -200,13 +214,37 @@ class MapInfo {
     return MapInfo(
       name: json['name'],
       description: json['description'],
-      home: Pose.fromJson(json['home']),
       // TODO: Implement on ROS side.
+      // home: Pose.fromJson(json['home']),
       // resolution: json['resolution'],
       // width: json['width'],
       // height: json['height'],
       // origin: Pose.fromJson(json['origin']),
       // mapImage: json['mapImage'],
+    );
+  }
+}
+
+class MapStatus {
+  const MapStatus({
+    this.currentMap = const MapInfo(),
+    this.mapsList = const [],
+    this.mapMode = MapMode.localization
+  });
+
+  final MapInfo currentMap;
+  final List<MapInfo> mapsList;
+  final MapMode mapMode;
+
+  factory MapStatus.fromJson(Map<String, dynamic> json) {
+    final jsonMapsList = json['maps_list'] as List<dynamic>;
+    final mapsList = jsonMapsList
+        .map((mapJson) => MapInfo.fromJson(mapJson as Map<String, dynamic>))
+        .toList();
+    return MapStatus(
+      currentMap: MapInfo.fromJson(json['current_map']),
+      mapsList: mapsList,
+      mapMode: MapMode.fromIndex(json['map_mode']),
     );
   }
 }

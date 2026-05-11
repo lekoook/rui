@@ -160,7 +160,7 @@ void _fitToScreen() {
                     children: [
                       CustomPaint(
                         size: Size(widget.mapData.width, widget.mapData.height),
-                        painter: _MapPainter(mapImage: widget.mapData.mapImage),
+                        painter: MapPainter(mapImage: widget.mapData.mapImage),
                       ),
                       ...widget.mapMarkers.map((marker) {
                         return ValueListenableBuilder(
@@ -251,8 +251,8 @@ void _fitToScreen() {
   }
 }
 
-class _MapPainter extends CustomPainter {
-  _MapPainter({required this.mapImage});
+class MapPainter extends CustomPainter {
+  MapPainter({required this.mapImage});
 
   final ui.Image? mapImage;
 

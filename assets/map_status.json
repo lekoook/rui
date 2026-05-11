@@ -1,0 +1,420 @@
+{
+    "current_map": {
+        "name": "",
+        "description": "",
+        "yaml_file": "",
+        "pgm_file": "",
+        "pose_graph_file": "",
+        "data_file": "",
+        "home": {
+            "position": {
+                "x": 0,
+                "y": 0,
+                "z": 0
+            },
+            "orientation": {
+                "x": 0,
+                "y": 0,
+                "z": 0,
+                "w": 1
+            }
+        },
+        "landmarks": [],
+        "waypoints": []
+    },
+    "maps_list": [
+        {
+            "name": "blk_8_level_2",
+            "description": "Level 2 office in SoE",
+            "yaml_file": "",
+            "pgm_file": "",
+            "pose_graph_file": "",
+            "data_file": "",
+            "home": {
+                "position": {
+                    "x": -3.4043764721268346,
+                    "y": -2.1556396047688224,
+                    "z": 0
+                },
+                "orientation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": -0.707,
+                    "w": 0.707
+                }
+            },
+            "landmarks": [
+                {
+                    "name": "charging_station",
+                    "description": "Charging station location",
+                    "pose": {
+                        "position": {
+                            "x": -3.4043764721268346,
+                            "y": -2.1556396047688224,
+                            "z": 0
+                        },
+                        "orientation": {
+                            "x": 0,
+                            "y": 0,
+                            "z": -0.707,
+                            "w": 0.707
+                        }
+                    }
+                },
+                {
+                    "name": "standby",
+                    "description": "Standby location",
+                    "pose": {
+                        "position": {
+                            "x": -3.4043764721268346,
+                            "y": -2.1556396047688224,
+                            "z": 0
+                        },
+                        "orientation": {
+                            "x": 0,
+                            "y": 0,
+                            "z": -0.707,
+                            "w": 0.707
+                        }
+                    }
+                },
+                {
+                    "name": "glass_door",
+                    "description": "Block 8 main glass door",
+                    "pose": {
+                        "position": {
+                            "x": -3.4043764721268346,
+                            "y": -2.1556396047688224,
+                            "z": 0
+                        },
+                        "orientation": {
+                            "x": 0,
+                            "y": 0,
+                            "z": -0.707,
+                            "w": 0.707
+                        }
+                    }
+                }
+            ],
+            "waypoints": [
+                {
+                    "name": "room",
+                    "description": "Waypoints in the room.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": -2.275482771530778,
+                                "y": -6.00945824625966,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": -0.707,
+                                "w": 0.707
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": -2.275482771530778,
+                                "y": -4.00945824625966,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": -0.707,
+                                "w": 0.707
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "corridor",
+                    "description": "Waypoints in the corridor.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": -2.275482771530778,
+                                "y": -5.00945824625966,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": -0.707,
+                                "w": 0.707
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": 0.9212146373196698,
+                                "y": 0.3920562238880544,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": 2.7554253886621978,
+                                "y": 5.210680012589878,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": -0.08867282211463556,
+                                "y": 1.2731959548928449,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "outdoor",
+                    "description": "Outdoor waypoints.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": -2.275482771530778,
+                                "y": -5.00945824625966,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 1,
+                                "y": 0,
+                                "z": 0,
+                                "w": 0
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": 0.9212146373196698,
+                                "y": 0.3920562238880544,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 1,
+                                "y": 0,
+                                "z": 0,
+                                "w": 0
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": 2.7554253886621978,
+                                "y": 5.210680012589878,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 1,
+                                "y": 0,
+                                "z": 0,
+                                "w": 0
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": 8.662887039103392,
+                                "y": 4.206685347518323,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 1,
+                                "y": 0,
+                                "z": 0,
+                                "w": 0
+                            }
+                        },
+                        {
+                            "position": {
+                                "x": 14.942160249177135,
+                                "y": 4.84846789495721,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 1,
+                                "y": 0,
+                                "z": 0,
+                                "w": 0
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "office_corridor",
+            "description": "A test map.",
+            "yaml_file": "",
+            "pgm_file": "",
+            "pose_graph_file": "",
+            "data_file": "",
+            "home": {
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "orientation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "w": 1
+                }
+            },
+            "landmarks": [],
+            "waypoints": [
+                {
+                    "name": "waypoints 1",
+                    "description": "WP 1 poses.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "waypoints 2",
+                    "description": "WP 2 poses.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": 1,
+                                "y": 1,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "blk_8_level_1",
+            "description": "Map of block 8 level 1 ground area.",
+            "yaml_file": "",
+            "pgm_file": "",
+            "pose_graph_file": "",
+            "data_file": "",
+            "home": {
+                "position": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                },
+                "orientation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0,
+                    "w": 1
+                }
+            },
+            "landmarks": [
+                {
+                    "name": "charging_station",
+                    "description": "Changed",
+                    "pose": {
+                        "position": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0
+                        },
+                        "orientation": {
+                            "x": 0,
+                            "y": 0,
+                            "z": 0,
+                            "w": 0
+                        }
+                    }
+                }
+            ],
+            "waypoints": [
+                {
+                    "name": "waypoints 1",
+                    "description": "WP 1 poses.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        }
+                    ]
+                },
+                {
+                    "name": "waypoints 2",
+                    "description": "WP 2 poses.",
+                    "poses": [
+                        {
+                            "position": {
+                                "x": 1,
+                                "y": 1,
+                                "z": 0
+                            },
+                            "orientation": {
+                                "x": 0,
+                                "y": 0,
+                                "z": 0,
+                                "w": 1
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "map_mode": 0
+}

@@ -23,7 +23,9 @@ class MainApp extends StatelessWidget {
       ),
       darkTheme: ShadThemeData(
         // Mirror customizations for dark mode.
-        colorScheme: darkColorScheme,
+        colorScheme: darkColorScheme.copyWith(
+          card: const Color.fromARGB(68, 48, 48, 48),
+        ),
         separatorTheme: ShadSeparatorTheme(
           color: darkColorScheme.primary
         )

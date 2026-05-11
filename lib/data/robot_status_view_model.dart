@@ -26,6 +26,7 @@ class RobotStatusViewModel {
   ValueNotifier<AutonomyStatus> get autonomyNotifier => _autonomyNotifier;
   ValueNotifier<Pose> get robotPoseNotifier => _robotModel.robotPose;
   ValueNotifier<MapInfo> get currentMapNotifier => _currentMapNotifier;
+  ValueNotifier<MapStatus> get mapStatusNotifier => _robotModel.mapStatus;
   ui.Image? get currentMapImage => _currentMapNotifier.value.mapImage;
 
   void connectToRobot(String host, int port) {
