@@ -178,7 +178,7 @@ class TextWithIcon extends StatelessWidget {
       spacing: 8.0,
       children: [
         icon,
-        Text(text)
+        Text(text, style: style)
       ],
     );
   }

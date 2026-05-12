@@ -3,6 +3,7 @@ import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/labels.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
@@ -23,58 +24,55 @@ class RobotStatusPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 300,
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 12.0),
-            alignment: Alignment.centerLeft,
-            child: Text('Robot Status'),
-          ),
-          Divider(thickness: 1.0, height: 1.0, indent: 8.0, endIndent: 8.0),
-          FieldRow(
-            iconData: Icons.wifi,
-            name: 'Connection',
-            dataWidget: ValueListenableBuilder<RobotConnectionStatus>(
-              valueListenable: robotStatusViewModel.connectionNotifier,
-              builder: (context, connection, child) {
-                return ConnectionStatusLabel(status: connection);
-              }
-            )
-          ),
-          FieldRow(
-            iconData: Icons.battery_std,
-            name: 'Battery',
-            dataWidget: ValueListenableBuilder<BatteryState>(
-              valueListenable: robotStatusViewModel.batteryStateNotifier,
-              builder: (context, battery, child) {
-                return BatteryStateLabel(state: battery);
-              }
-            )
-          ),
-          FieldRow(
-            iconData: Icons.drive_eta,
-            name: 'Autonomy',
-            dataWidget: ValueListenableBuilder<AutonomyStatus>(
-              valueListenable: robotStatusViewModel.autonomyNotifier,
-              builder: (context, autonomy, child) {
-                return AutonomyStatusLabel(status: autonomy);
-              },
-            )
-          ),
-          FieldRow(
-            iconData: Icons.my_location,
-            name: 'Location',
-            dataWidget: ValueListenableBuilder<Pose>(
-              valueListenable: robotStatusViewModel.robotPoseNotifier,
-              builder: (context, location, child) {
-                return LocationLabel(locationData: location);
-              }
-            )
+    return Column(
+      spacing: AppSpacing.sm,
+      children: [
+        Container(
+          alignment: Alignment.bottomLeft,
+          child: Text('Robot Status', style: ShadTheme.of(context).textTheme.h4),
+        ),
+        ShadSeparator.horizontal(margin: EdgeInsets.zero),
+        FieldRow(
+          iconData: Icons.wifi,
+          name: 'Connection',
+          dataWidget: ValueListenableBuilder<RobotConnectionStatus>(
+            valueListenable: robotStatusViewModel.connectionNotifier,
+            builder: (context, connection, child) {
+              return ConnectionStatusLabel(status: connection);
+            }
           )
-        ]
-      )
+        ),
+        FieldRow(
+          iconData: Icons.battery_std,
+          name: 'Battery',
+          dataWidget: ValueListenableBuilder<BatteryState>(
+            valueListenable: robotStatusViewModel.batteryStateNotifier,
+            builder: (context, battery, child) {
+              return BatteryStateLabel(state: battery);
+            }
+          )
+        ),
+        FieldRow(
+          iconData: Icons.drive_eta,
+          name: 'Autonomy',
+          dataWidget: ValueListenableBuilder<AutonomyStatus>(
+            valueListenable: robotStatusViewModel.autonomyNotifier,
+            builder: (context, autonomy, child) {
+              return AutonomyStatusLabel(status: autonomy);
+            },
+          )
+        ),
+        FieldRow(
+          iconData: Icons.my_location,
+          name: 'Location',
+          dataWidget: ValueListenableBuilder<Pose>(
+            valueListenable: robotStatusViewModel.robotPoseNotifier,
+            builder: (context, location, child) {
+              return LocationLabel(locationData: location);
+            }
+          )
+        )
+      ]
     );
   }
 }
@@ -93,19 +91,16 @@ class FieldRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 4.0, bottom: 4.0),
-      child: Row(
-      spacing: 8.0,
+    return Row(
       children: [
         Expanded(
-          child: TextWithIcon(text: name, icon: Icon(iconData)),
+          child: TextWithIcon(text: name, icon: Icon(iconData), style: ShadTheme.of(context).textTheme.p),
         ),
         Align(
           alignment: Alignment.centerRight,
           child: dataWidget,
         ),
       ],
-    ));
+    );
   }
 }
