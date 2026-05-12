@@ -3,6 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/screens/buttons.dart';
+import 'package:rui/screens/cards.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 import 'package:vector_math/vector_math_64.dart' as math;
 
@@ -76,13 +78,17 @@ class MapDisplay extends StatefulWidget {
   State<MapDisplay> createState() => _MapDisplayState();
 }
 
-class _MapDisplayState extends State<MapDisplay> {
+class _MapDisplayState extends State<MapDisplay> with AutomaticKeepAliveClientMixin {
   static const double _minScale = 1.0;
   static const double _maxScale = 10.0;
   final TransformationController _transformController = TransformationController();
+  final _popoverController = ShadPopoverController();
   final GlobalKey _stackKey = GlobalKey();
   BoxConstraints _viewerConstraints = BoxConstraints();
   final ValueNotifier<double> _selectedScaleNotifier = ValueNotifier(1.0);
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -135,118 +141,153 @@ void _fitToScreen() {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        key: _stackKey,
-        children: [
-          // WORLD LAYER
-          LayoutBuilder(
-            builder: (context, constraints) {
-              _viewerConstraints = constraints;
-              return InteractiveViewer(
-                transformationController: _transformController,
-                minScale: _minScale,
-                maxScale: _maxScale,
-                scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
-                constrained: false,
-                boundaryMargin: EdgeInsets.all(min(widget.mapData.width, widget.mapData.height) * 0.5),
-                onInteractionEnd:(details) {
-                  _selectedScaleNotifier.value = _transformController.value.getMaxScaleOnAxis();
-                },
-                child: SizedBox(
-                  width: widget.mapData.width,
-                  height: widget.mapData.height,
-                  child: Stack(
-                    children: [
-                      CustomPaint(
-                        size: Size(widget.mapData.width, widget.mapData.height),
-                        painter: MapPainter(mapImage: widget.mapData.mapImage),
-                      ),
-                      ...widget.mapMarkers.map((marker) {
-                        return ValueListenableBuilder(
-                          valueListenable: marker.pose,
-                          builder: (context, value, child) {
-                            Offset pos = _worldToMap(
-                              mx: value.posX,
-                              my: value.posY,
-                              resolution: widget.mapData.resolution,
-                              originX: widget.mapData.origin.posX,
-                              originY: widget.mapData.origin.posY,
-                              mapHeight: widget.mapData.height
-                            );
-                            return Positioned(
-                              left: pos.dx - marker.width / 2.0,
-                              top: pos.dy - marker.height / 2.0,
-                              child: CompositedTransformTarget(
-                                link: marker.layerLink,
-                                child: Transform.rotate(
-                                  angle: -marker.pose.value.yaw,
-                                  child: _InteractiveViewMarker(
-                                    mapData: widget.mapData,
-                                    marker: marker.marker,
+    super.build(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return ConstrainedBox(
+          constraints: constraints,
+          child: Column(
+            children: [
+              AppBar(
+                toolbarHeight: 30,
+                leading: ShadPopover(
+                  controller: _popoverController,
+                  popover: (context) {
+                    return SizedBox(
+                      width: 400,
+                      height: 400,
+                      child: MapInfoCard(mapData: widget.mapData)
+                    );
+                  },
+                  child: ShadTooltip(
+                    builder: (context) {
+                      return Text('Map information');
+                    },
+                    child: InfoButton.ghost(
+                      onPressed: _popoverController.toggle,
+                    ),
+                  )
+                ),
+                title: Text(widget.mapData.name)
+              ),
+              ShadSeparator.horizontal(),
+              Expanded(
+                child: Stack(
+                  key: _stackKey,
+                  children: [
+                    // WORLD LAYER
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        _viewerConstraints = constraints;
+                        return InteractiveViewer(
+                          transformationController: _transformController,
+                          minScale: _minScale,
+                          maxScale: _maxScale,
+                          scaleFactor: kDefaultMouseScrollToScaleFactor * 4,
+                          constrained: false,
+                          boundaryMargin: EdgeInsets.all(min(widget.mapData.width, widget.mapData.height) * 0.5),
+                          onInteractionEnd:(details) {
+                            _selectedScaleNotifier.value = _transformController.value.getMaxScaleOnAxis();
+                          },
+                          child: SizedBox(
+                            width: widget.mapData.width,
+                            height: widget.mapData.height,
+                            child: Stack(
+                              children: [
+                                CustomPaint(
+                                  size: Size(widget.mapData.width, widget.mapData.height),
+                                  painter: MapPainter(mapImage: widget.mapData.mapImage),
+                                ),
+                                ...widget.mapMarkers.map((marker) {
+                                  return ValueListenableBuilder(
+                                    valueListenable: marker.pose,
+                                    builder: (context, value, child) {
+                                      Offset pos = _worldToMap(
+                                        mx: value.posX,
+                                        my: value.posY,
+                                        resolution: widget.mapData.resolution,
+                                        originX: widget.mapData.origin.posX,
+                                        originY: widget.mapData.origin.posY,
+                                        mapHeight: widget.mapData.height
+                                      );
+                                      return Positioned(
+                                        left: pos.dx - marker.width / 2.0,
+                                        top: pos.dy - marker.height / 2.0,
+                                        child: CompositedTransformTarget(
+                                          link: marker.layerLink,
+                                          child: Transform.rotate(
+                                            angle: -marker.pose.value.yaw,
+                                            child: _InteractiveViewMarker(
+                                              mapData: widget.mapData,
+                                              marker: marker.marker,
+                                              width: marker.width,
+                                              height: marker.height,
+                                              hiddenNotifier: marker.hiddenNotifier,
+                                              onTap: (){},
+                                              onSecondaryTapDown:(details) {},
+                                            )
+                                          )
+                                        )
+                                      );
+                                    }
+                                  );
+                                })
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                    ),
+                    // LIGHTWEIGHT OVERLAY LAYER
+                    Positioned.fill(
+                      child: AnimatedBuilder(
+                        animation: _transformController,
+                        builder: (context, child) {
+                          return Stack(
+                            children: [
+                              ...widget.mapMarkers.map((marker) {
+                                return CompositedTransformFollower(
+                                  link: marker.layerLink,
+                                  child: _OverlayMarker(
+                                    popoverWidget: marker.popoverWidget,
                                     width: marker.width,
                                     height: marker.height,
-                                    hiddenNotifier: marker.hiddenNotifier,
-                                    onTap: (){},
-                                    onSecondaryTapDown:(details) {},
-                                  )
-                                )
-                              )
-                            );
+                                    onTap: () {},
+                                    onSecondaryTap: () {},
+                                  ),
+                                );
+                              }),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    // HUD LAYER
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      bottom: 10,
+                      left: 10,
+                      child: _MapHUD(
+                        selectedScaleNotifier: _selectedScaleNotifier,
+                        scaleMin: _minScale,
+                        scaleMax: _maxScale,
+                        onFitToScreenClicked: _fitToScreen,
+                        onScaleChanged: _setScale,
+                        onHiddenChanged: (hidden) {
+                          for (var m in widget.mapMarkers) {
+                            m.hiddenNotifier.value = hidden;
                           }
-                        );
-                      })
-                    ],
-                  ),
-                ),
-              );
-            }
-          ),
-          // LIGHTWEIGHT OVERLAY LAYER
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _transformController,
-              builder: (context, child) {
-                return Stack(
-                  children: [
-                    ...widget.mapMarkers.map((marker) {
-                      return CompositedTransformFollower(
-                        link: marker.layerLink,
-                        child: _OverlayMarker(
-                          popoverWidget: marker.popoverWidget,
-                          width: marker.width,
-                          height: marker.height,
-                          onTap: () {},
-                          onSecondaryTap: () {},
-                        ),
-                      );
-                    }),
+                        },
+                      ),
+                    )
                   ],
-                );
-              },
-            ),
-          ),
-          // HUD LAYER
-          Positioned(
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10,
-            child: _MapHUD(
-              selectedScaleNotifier: _selectedScaleNotifier,
-              scaleMin: _minScale,
-              scaleMax: _maxScale,
-              onFitToScreenClicked: _fitToScreen,
-              onScaleChanged: _setScale,
-              onHiddenChanged: (hidden) {
-                for (var m in widget.mapMarkers) {
-                  m.hiddenNotifier.value = hidden;
-                }
-              },
-            ),
+                )
+              )
+            ],
           )
-        ],
-      ),
+        );
+      }
     );
   }
 }

@@ -27,7 +27,7 @@ class MainApp extends StatelessWidget {
           card: const Color.fromARGB(68, 48, 48, 48),
         ),
         separatorTheme: ShadSeparatorTheme(
-          color: darkColorScheme.primary
+          color: darkColorScheme.ring,
         )
       ),
       appBuilder: (context) {

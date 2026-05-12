@@ -193,14 +193,8 @@ class _RobotDashboard extends State<RobotDashboard> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Expanded(
-          child: Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).colorScheme.outline,
-                width: 1.0
-              ),
-              borderRadius: BorderRadius.zero
-            ),
+          child: Padding(
+            padding: EdgeInsets.all(AppSpacing.sm),
             child: ClipRect(
               child: ListenableBuilder(
                 listenable: widget.robotStatusViewModel.currentMapNotifier,
@@ -217,6 +211,7 @@ class _RobotDashboard extends State<RobotDashboard> {
             )
           )
         ),
+        ShadSeparator.vertical(),
         RobotStatusPanel(robotStatusViewModel: widget.robotStatusViewModel),
       ],
     );
