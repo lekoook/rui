@@ -4,9 +4,9 @@ import 'dart:ui' as ui;
 import 'geometry_msgs.dart';
 
 enum RobotConnectionStatus {
-  unknown('Unknown'),
   disconnected('Disconnected'),
-  connected('Connected');
+  connected('Connected'),
+  connecting('Connecting');
   const RobotConnectionStatus(this.label);
   final String label;
 }

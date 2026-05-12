@@ -31,9 +31,13 @@ class MainApp extends StatelessWidget {
         )
       ),
       appBuilder: (context) {
-        final shadTheme = Theme.of(context);
-        final appTheme = shadTheme.copyWith(
+        final shadTheme = ShadTheme.of(context);
+        final appThemeOriginal = Theme.of(context);
+        final appTheme = appThemeOriginal.copyWith(
           // Change material themes here.
+          progressIndicatorTheme: appThemeOriginal.progressIndicatorTheme.copyWith(
+            color: shadTheme.colorScheme.foreground
+          )
         );
         return MaterialApp(
           theme: appTheme,

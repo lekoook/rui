@@ -97,13 +97,12 @@ class RobotHeaderView extends StatelessWidget {
             ),
             ConnectRobotPopover(
               onConnectPressed: (host, port) {
-                robotStatusViewModel.connectToRobot(host, port);
+                robotStatusViewModel.connect(host, port);
               },
               onDisconnectPressed: () {
                 robotStatusViewModel.disconnectRobot();
               },
-              onCancelPressed: () {},
-              connectedNotifier: robotStatusViewModel.connectionNotifier,
+              connectedNotifier: robotStatusViewModel.connectionStatusNotifier,
             )
           ],
         ),
@@ -131,7 +130,7 @@ class _RobotStatusFooterViewState extends State<RobotStatusFooterView> {
         spacing: AppSpacing.sm,
         children: [
           ValueListenableBuilder<RobotConnectionStatus>(
-            valueListenable: widget.robotStatusViewModel.connectionNotifier,
+            valueListenable: widget.robotStatusViewModel.connectionStatusNotifier,
             builder: (context, connection, child) {
               return ConnectionStatusLabel(status: connection);
             }

@@ -16,12 +16,13 @@ class RobotViewModel {
     }
 
   final RobotModel _robotModel;
+  final _connectionStatusNotifier = ValueNotifier(RobotConnectionStatus.disconnected);
   final ValueNotifier<AutonomyStatus> _autonomyNotifier;
 
   RobotModel get robotMode => _robotModel;
   String get robotName => _robotModel.robotName;
   double get batteryPercentage => _robotModel.batteryState.value.percentage;
-  ValueNotifier<RobotConnectionStatus> get connectionNotifier => _robotModel.connectionStatus;
+  ValueNotifier<RobotConnectionStatus> get connectionStatusNotifier => _connectionStatusNotifier;
   ValueNotifier<BatteryState> get batteryStateNotifier => _robotModel.batteryState;
   ValueNotifier<AutonomyStatus> get autonomyNotifier => _autonomyNotifier;
   ValueNotifier<Pose> get robotPoseNotifier => _robotModel.robotPose;
@@ -29,17 +30,31 @@ class RobotViewModel {
   ValueNotifier<MapStatus> get mapStatusNotifier => _robotModel.mapStatus;
   ui.Image? get currentMapImage => _robotModel.currentMap.value.mapImage;
 
-  void connectToRobot(String host, int port) {
-    _robotModel.connect(host, port)
+  bool isConnected() {
+    return _connectionStatusNotifier.value == RobotConnectionStatus.connected;
+  }
+
+  Future<void> connect(String host, int port) async {
+    if (isConnected()) {
+      disconnectRobot();
+    }
+    _connectionStatusNotifier.value = RobotConnectionStatus.connecting;
+    await _robotModel.connect(host, port)
       .then((success) {
-        // Do nothing for now.
+        if (success) {
+          _connectionStatusNotifier.value = RobotConnectionStatus.connected;
+        } else {
+          _connectionStatusNotifier.value = RobotConnectionStatus.disconnected;
+        }
       }).catchError((error) {
-        print('[RobotStatusViewModel.connectToRobot]: $error');
+        _connectionStatusNotifier.value = RobotConnectionStatus.disconnected;
+        print('[RobotStatusViewModel.connect]: $error');
       });
   }
 
   void disconnectRobot() {
     _robotModel.disconnect();
+    _connectionStatusNotifier.value = RobotConnectionStatus.disconnected;
   }
 
   void dispose() {

@@ -95,7 +95,7 @@ class ConnectionStatusLabel extends TextLabel {
     color: switch (status) {
       RobotConnectionStatus.disconnected => Colors.red,
       RobotConnectionStatus.connected => Colors.green,
-      _ => Colors.grey
+      _ => Colors.orange
     }
   );
 

@@ -14,7 +14,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 Widget robotStatusPanel() {
   final rm = RobotModel();
   final vm = RobotViewModel(robotModel: rm);
-  vm.connectionNotifier.value = RobotConnectionStatus.connected;
+  vm.connectionStatusNotifier.value = RobotConnectionStatus.connected;
   vm.autonomyNotifier.value = AutonomyStatus.idle;
   vm.batteryStateNotifier.value = const BatteryState(
     header: Header.zero(),
@@ -45,7 +45,7 @@ class RobotStatusPanel extends StatelessWidget {
           iconData: Icons.wifi,
           name: 'Connection',
           dataWidget: ValueListenableBuilder<RobotConnectionStatus>(
-            valueListenable: robotStatusViewModel.connectionNotifier,
+            valueListenable: robotStatusViewModel.connectionStatusNotifier,
             builder: (context, connection, child) {
               return ConnectionStatusLabel(status: connection);
             }
