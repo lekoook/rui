@@ -6,9 +6,7 @@ class Accel {
 
   const Accel({required this.linear, required this.angular});
 
-  const Accel.zero()
-      : linear = const Vector3.zero(),
-        angular = const Vector3.zero();
+  static const zero = Accel(linear: Vector3.zero, angular: Vector3.zero);
 
   factory Accel.fromJson(Map<String, dynamic> json) {
     return Accel(
@@ -26,9 +24,7 @@ class AccelStamped {
 
   const AccelStamped({required this.header, required this.accel});
 
-  const AccelStamped.zero()
-      : header = const Header.zero(),
-        accel = const Accel.zero();
+  static const zero = AccelStamped(header: Header.zero, accel: Accel.zero);
 
   factory AccelStamped.fromJson(Map<String, dynamic> json) {
     return AccelStamped(
@@ -46,9 +42,7 @@ class AccelWithCovariance {
 
   const AccelWithCovariance({required this.accel, required this.covariance});
 
-  const AccelWithCovariance.zero()
-      : accel = const Accel.zero(),
-        covariance = const <double>[];
+  static const zero = AccelWithCovariance(accel: Accel.zero, covariance: []);
 
   factory AccelWithCovariance.fromJson(Map<String, dynamic> json) {
     return AccelWithCovariance(
@@ -66,9 +60,7 @@ class AccelWithCovarianceStamped {
 
   const AccelWithCovarianceStamped({required this.header, required this.accel});
 
-  const AccelWithCovarianceStamped.zero()
-      : header = const Header.zero(),
-        accel = const AccelWithCovariance.zero();
+  static const zero = AccelWithCovarianceStamped(header: Header.zero, accel: AccelWithCovariance.zero);
 
   factory AccelWithCovarianceStamped.fromJson(Map<String, dynamic> json) {
     return AccelWithCovarianceStamped(
@@ -101,15 +93,7 @@ class Inertia {
     required this.izz,
   });
 
-  const Inertia.zero()
-      : m = 0,
-        com = const Vector3.zero(),
-        ixx = 0,
-        ixy = 0,
-        ixz = 0,
-        iyy = 0,
-        iyz = 0,
-        izz = 0;
+  static const zero = Inertia(m: 0, com: Vector3.zero, ixx: 0, ixy: 0, ixz: 0, iyy: 0, iyz: 0, izz: 0);
 
   factory Inertia.fromJson(Map<String, dynamic> json) {
     return Inertia(
@@ -142,9 +126,7 @@ class InertiaStamped {
 
   const InertiaStamped({required this.header, required this.inertia});
 
-  const InertiaStamped.zero()
-      : header = const Header.zero(),
-        inertia = const Inertia.zero();
+  static const zero = InertiaStamped(header: Header.zero, inertia: Inertia.zero);
 
   factory InertiaStamped.fromJson(Map<String, dynamic> json) {
     return InertiaStamped(
@@ -163,7 +145,7 @@ class Point32 {
 
   const Point32({required this.x, required this.y, required this.z});
 
-  const Point32.zero() : x = 0, y = 0, z = 0;
+  static const zero = Point32(x: 0, y: 0, z: 0);
 
   factory Point32.fromJson(Map<String, dynamic> json) {
     return Point32(
@@ -183,7 +165,7 @@ class Point {
 
   const Point({required this.x, required this.y, required this.z});
 
-  const Point.zero() : x = 0, y = 0, z = 0;
+  static const zero = Point(x: 0, y: 0, z: 0);
 
   factory Point.fromJson(Map<String, dynamic> json) {
     return Point(
@@ -202,9 +184,7 @@ class PointStamped {
 
   const PointStamped({required this.header, required this.point});
 
-  const PointStamped.zero()
-      : header = const Header.zero(),
-        point = const Point.zero();
+  static const zero = PointStamped(header: Header.zero, point: Point.zero);
 
   factory PointStamped.fromJson(Map<String, dynamic> json) {
     return PointStamped(
@@ -222,9 +202,7 @@ class PolygonInstance {
 
   const PolygonInstance({required this.polygon, required this.id});
 
-  const PolygonInstance.zero()
-      : polygon = const Polygon.zero(),
-        id = 0;
+  static const zero = PolygonInstance(polygon: Polygon.zero, id: 0);
 
   factory PolygonInstance.fromJson(Map<String, dynamic> json) {
     return PolygonInstance(
@@ -242,9 +220,7 @@ class PolygonInstanceStamped {
 
   const PolygonInstanceStamped({required this.header, required this.polygon});
 
-  const PolygonInstanceStamped.zero()
-      : header = const Header.zero(),
-        polygon = const PolygonInstance.zero();
+  static const zero = PolygonInstanceStamped(header: Header.zero, polygon: PolygonInstance.zero);
 
   factory PolygonInstanceStamped.fromJson(Map<String, dynamic> json) {
     return PolygonInstanceStamped(
@@ -261,7 +237,7 @@ class Polygon {
 
   const Polygon({required this.points});
 
-  const Polygon.zero() : points = const <Point32>[];
+  static const zero = Polygon(points: []);
 
   factory Polygon.fromJson(Map<String, dynamic> json) {
     return Polygon(
@@ -280,9 +256,7 @@ class PolygonStamped {
 
   const PolygonStamped({required this.header, required this.polygon});
 
-  const PolygonStamped.zero()
-      : header = const Header.zero(),
-        polygon = const Polygon.zero();
+  static const zero = PolygonStamped(header: Header.zero, polygon: Polygon.zero);
 
   factory PolygonStamped.fromJson(Map<String, dynamic> json) {
     return PolygonStamped(
@@ -300,9 +274,7 @@ class PoseArray {
 
   const PoseArray({required this.header, required this.poses});
 
-  const PoseArray.zero()
-      : header = const Header.zero(),
-        poses = const <Pose>[];
+  static const zero = PoseArray(header: Header.zero, poses: []);
 
   factory PoseArray.fromJson(Map<String, dynamic> json) {
     return PoseArray(
@@ -325,9 +297,7 @@ class Pose {
 
   const Pose({required this.position, required this.orientation});
 
-  const Pose.zero()
-      : position = const Point.zero(),
-        orientation = const Quaternion.zero();
+  static const zero = Pose(position: Point.zero, orientation: Quaternion.zero);
 
   factory Pose.fromJson(Map<String, dynamic> json) {
     return Pose(
@@ -345,9 +315,7 @@ class PoseStamped {
 
   const PoseStamped({required this.header, required this.pose});
 
-  const PoseStamped.zero()
-      : header = const Header.zero(),
-        pose = const Pose.zero();
+  static const zero = PoseStamped(header: Header.zero, pose: Pose.zero);
 
   factory PoseStamped.fromJson(Map<String, dynamic> json) {
     return PoseStamped(
@@ -365,9 +333,7 @@ class PoseWithCovariance {
 
   const PoseWithCovariance({required this.pose, required this.covariance});
 
-  const PoseWithCovariance.zero()
-      : pose = const Pose.zero(),
-        covariance = const <double>[];
+  static const zero = PoseWithCovariance(pose: Pose.zero, covariance: []);
 
   factory PoseWithCovariance.fromJson(Map<String, dynamic> json) {
     return PoseWithCovariance(
@@ -385,9 +351,7 @@ class PoseWithCovarianceStamped {
 
   const PoseWithCovarianceStamped({required this.header, required this.pose});
 
-  const PoseWithCovarianceStamped.zero()
-      : header = const Header.zero(),
-        pose = const PoseWithCovariance.zero();
+  static const zero = PoseWithCovarianceStamped(header: Header.zero, pose: PoseWithCovariance.zero);
 
   factory PoseWithCovarianceStamped.fromJson(Map<String, dynamic> json) {
     return PoseWithCovarianceStamped(
@@ -407,7 +371,7 @@ class Quaternion {
 
   const Quaternion({required this.x, required this.y, required this.z, required this.w});
 
-  const Quaternion.zero() : x = 0, y = 0, z = 0, w = 1;
+  static const zero = Quaternion(x: 0, y: 0, z: 0, w: 1);
 
   factory Quaternion.fromJson(Map<String, dynamic> json) {
     return Quaternion(
@@ -427,9 +391,7 @@ class QuaternionStamped {
 
   const QuaternionStamped({required this.header, required this.quaternion});
 
-  const QuaternionStamped.zero()
-      : header = const Header.zero(),
-        quaternion = const Quaternion.zero();
+  static const zero = QuaternionStamped(header: Header.zero, quaternion: Quaternion.zero);
 
   factory QuaternionStamped.fromJson(Map<String, dynamic> json) {
     return QuaternionStamped(
@@ -447,9 +409,7 @@ class Transform {
 
   const Transform({required this.translation, required this.rotation});
 
-  const Transform.zero()
-      : translation = const Vector3.zero(),
-        rotation = const Quaternion.zero();
+  static const zero = Transform(translation: Vector3.zero, rotation: Quaternion.zero);
 
   factory Transform.fromJson(Map<String, dynamic> json) {
     return Transform(
@@ -468,10 +428,7 @@ class TransformStamped {
 
   const TransformStamped({required this.header, required this.childFrameId, required this.transform});
 
-  const TransformStamped.zero()
-      : header = const Header.zero(),
-        childFrameId = '',
-        transform = const Transform.zero();
+  static const zero = TransformStamped(header: Header.zero, childFrameId: '', transform: Transform.zero);
 
   factory TransformStamped.fromJson(Map<String, dynamic> json) {
     return TransformStamped(
@@ -494,9 +451,7 @@ class Twist {
 
   const Twist({required this.linear, required this.angular});
 
-  const Twist.zero()
-      : linear = const Vector3.zero(),
-        angular = const Vector3.zero();
+  static const zero = Twist(linear: Vector3.zero, angular: Vector3.zero);
 
   factory Twist.fromJson(Map<String, dynamic> json) {
     return Twist(
@@ -514,9 +469,7 @@ class TwistStamped {
 
   const TwistStamped({required this.header, required this.twist});
 
-  const TwistStamped.zero()
-      : header = const Header.zero(),
-        twist = const Twist.zero();
+  static const zero = TwistStamped(header: Header.zero, twist: Twist.zero);
 
   factory TwistStamped.fromJson(Map<String, dynamic> json) {
     return TwistStamped(
@@ -534,9 +487,7 @@ class TwistWithCovariance {
 
   const TwistWithCovariance({required this.twist, required this.covariance});
 
-  const TwistWithCovariance.zero()
-      : twist = const Twist.zero(),
-        covariance = const <double>[];
+  static const zero = TwistWithCovariance(twist: Twist.zero, covariance: []);
 
   factory TwistWithCovariance.fromJson(Map<String, dynamic> json) {
     return TwistWithCovariance(
@@ -554,9 +505,7 @@ class TwistWithCovarianceStamped {
 
   const TwistWithCovarianceStamped({required this.header, required this.twist});
 
-  const TwistWithCovarianceStamped.zero()
-      : header = const Header.zero(),
-        twist = const TwistWithCovariance.zero();
+  static const zero = TwistWithCovarianceStamped(header: Header.zero, twist: TwistWithCovariance.zero);
 
   factory TwistWithCovarianceStamped.fromJson(Map<String, dynamic> json) {
     return TwistWithCovarianceStamped(
@@ -575,7 +524,7 @@ class Vector3 {
 
   const Vector3({required this.x, required this.y, required this.z});
 
-  const Vector3.zero() : x = 0, y = 0, z = 0;
+  static const zero = Vector3(x: 0, y: 0, z: 0);
 
   factory Vector3.fromJson(Map<String, dynamic> json) {
     return Vector3(
@@ -594,9 +543,7 @@ class Vector3Stamped {
 
   const Vector3Stamped({required this.header, required this.vector});
 
-  const Vector3Stamped.zero()
-      : header = const Header.zero(),
-        vector = const Vector3.zero();
+  static const zero = Vector3Stamped(header: Header.zero, vector: Vector3.zero);
 
   factory Vector3Stamped.fromJson(Map<String, dynamic> json) {
     return Vector3Stamped(
@@ -621,11 +568,12 @@ class VelocityStamped {
     required this.velocity,
   });
 
-  const VelocityStamped.zero()
-      : header = const Header.zero(),
-        bodyFrameId = '',
-        referenceFrameId = '',
-        velocity = const Twist.zero();
+  static const zero = VelocityStamped(
+    header: Header.zero,
+    bodyFrameId: '',
+    referenceFrameId: '',
+    velocity: Twist.zero,
+  );
 
   factory VelocityStamped.fromJson(Map<String, dynamic> json) {
     return VelocityStamped(
@@ -650,9 +598,7 @@ class Wrench {
 
   const Wrench({required this.force, required this.torque});
 
-  const Wrench.zero()
-      : force = const Vector3.zero(),
-        torque = const Vector3.zero();
+  static const zero = Wrench(force: Vector3.zero, torque: Vector3.zero);
 
   factory Wrench.fromJson(Map<String, dynamic> json) {
     return Wrench(
@@ -670,9 +616,7 @@ class WrenchStamped {
 
   const WrenchStamped({required this.header, required this.wrench});
 
-  const WrenchStamped.zero()
-      : header = const Header.zero(),
-        wrench = const Wrench.zero();
+  static const zero = WrenchStamped(header: Header.zero, wrench: Wrench.zero);
 
   factory WrenchStamped.fromJson(Map<String, dynamic> json) {
     return WrenchStamped(

@@ -17,8 +17,8 @@ class RobotModel {
 
   web.EventSource _eventSource = web.EventSource('');
   final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
-  final _batteryState = ValueNotifier(const BatteryState.zero());
-  final _robotPose = ValueNotifier(const Pose.zero());
+  final _batteryState = ValueNotifier(BatteryState.zero);
+  final _robotPose = ValueNotifier(Pose.zero);
   final _currentMap = ValueNotifier(MapInfo());
   final _mapStatus = ValueNotifier(MapStatus());
 

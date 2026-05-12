@@ -8,9 +8,7 @@ class Goals {
 
   const Goals({required this.header, required this.goals});
 
-  const Goals.zero()
-      : header = const Header.zero(),
-        goals = const <PoseStamped>[];
+  static const zero = Goals(header: Header.zero, goals: []);
 
   factory Goals.fromJson(Map<String, dynamic> json) {
     return Goals(
@@ -40,11 +38,7 @@ class GridCells {
     required this.cells,
   });
 
-  const GridCells.zero()
-      : header = const Header.zero(),
-        cellWidth = 0,
-        cellHeight = 0,
-        cells = const <Point>[];
+  static const zero = GridCells(header: Header.zero, cellWidth: 0, cellHeight: 0, cells: []);
 
   factory GridCells.fromJson(Map<String, dynamic> json) {
     return GridCells(
@@ -80,12 +74,13 @@ class MapMetaData {
     required this.origin,
   });
 
-  const MapMetaData.zero()
-      : mapLoadTime = const BuiltinInterfacesTime.zero(),
-        resolution = 0,
-        width = 0,
-        height = 0,
-        origin = const Pose.zero();
+  static const zero = MapMetaData(
+    mapLoadTime: BuiltinInterfacesTime.zero,
+    resolution: 0,
+    width: 0,
+    height: 0,
+    origin: Pose.zero,
+  );
 
   factory MapMetaData.fromJson(Map<String, dynamic> json) {
     return MapMetaData(
@@ -113,10 +108,7 @@ class OccupancyGrid {
 
   const OccupancyGrid({required this.header, required this.info, required this.data});
 
-  const OccupancyGrid.zero()
-      : header = const Header.zero(),
-        info = const MapMetaData.zero(),
-        data = const <int>[];
+  static const zero = OccupancyGrid(header: Header.zero, info: MapMetaData.zero, data: []);
 
   factory OccupancyGrid.fromJson(Map<String, dynamic> json) {
     return OccupancyGrid(
@@ -146,11 +138,12 @@ class Odometry {
     required this.twist,
   });
 
-  const Odometry.zero()
-      : header = const Header.zero(),
-        childFrameId = '',
-        pose = const PoseWithCovariance.zero(),
-        twist = const TwistWithCovariance.zero();
+  static const zero = Odometry(
+    header: Header.zero,
+    childFrameId: '',
+    pose: PoseWithCovariance.zero,
+    twist: TwistWithCovariance.zero,
+  );
 
   factory Odometry.fromJson(Map<String, dynamic> json) {
     return Odometry(
@@ -175,9 +168,7 @@ class Path {
 
   const Path({required this.header, required this.poses});
 
-  const Path.zero()
-      : header = const Header.zero(),
-        poses = const <PoseStamped>[];
+  static const zero = Path(header: Header.zero, poses: []);
 
   factory Path.fromJson(Map<String, dynamic> json) {
     return Path(
@@ -200,9 +191,7 @@ class Trajectory {
 
   const Trajectory({required this.header, required this.points});
 
-  const Trajectory.zero()
-      : header = const Header.zero(),
-        points = const <TrajectoryPoint>[];
+  static const zero = Trajectory(header: Header.zero, points: []);
 
   factory Trajectory.fromJson(Map<String, dynamic> json) {
     return Trajectory(
@@ -234,12 +223,13 @@ class TrajectoryPoint {
     required this.effort,
   });
 
-  const TrajectoryPoint.zero()
-      : header = const Header.zero(),
-        pose = const Pose.zero(),
-        velocity = const Twist.zero(),
-        acceleration = const Accel.zero(),
-        effort = const Wrench.zero();
+  static const zero = TrajectoryPoint(
+    header: Header.zero,
+    pose: Pose.zero,
+    velocity: Twist.zero,
+    acceleration: Accel.zero,
+    effort: Wrench.zero,
+  );
 
   factory TrajectoryPoint.fromJson(Map<String, dynamic> json) {
     return TrajectoryPoint(

@@ -4,9 +4,7 @@ class BuiltinInterfacesTime {
 
   const BuiltinInterfacesTime({required this.sec, required this.nanosec});
 
-  const BuiltinInterfacesTime.zero()
-      : sec = 0,
-        nanosec = 0;
+  static const zero = BuiltinInterfacesTime(sec: 0, nanosec: 0);
 
   factory BuiltinInterfacesTime.fromJson(Map<String, dynamic> json) {
     return BuiltinInterfacesTime(

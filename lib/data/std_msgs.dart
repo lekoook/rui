@@ -5,7 +5,7 @@ class Bool {
 
   const Bool({required this.data});
 
-  const Bool.zero() : data = false;
+  static const zero = Bool(data: false);
 
   factory Bool.fromJson(Map<String, dynamic> json) {
     return Bool(data: json['data'] as bool);
@@ -19,7 +19,7 @@ class Byte {
 
   const Byte({required this.data});
 
-  const Byte.zero() : data = 0;
+  static const zero = Byte(data: 0);
 
   factory Byte.fromJson(Map<String, dynamic> json) {
     return Byte(data: (json['data'] as num).toInt());
@@ -34,9 +34,7 @@ class ByteMultiArray {
 
   const ByteMultiArray({required this.layout, required this.data});
 
-  const ByteMultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = ByteMultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory ByteMultiArray.fromJson(Map<String, dynamic> json) {
     return ByteMultiArray(
@@ -53,7 +51,7 @@ class Char {
 
   const Char({required this.data});
 
-  const Char.zero() : data = 0;
+  static const zero = Char(data: 0);
 
   factory Char.fromJson(Map<String, dynamic> json) {
     return Char(data: (json['data'] as num).toInt());
@@ -70,7 +68,7 @@ class ColorRGBA {
 
   const ColorRGBA({required this.r, required this.g, required this.b, required this.a});
 
-  const ColorRGBA.zero() : r = 0, g = 0, b = 0, a = 0;
+  static const zero = ColorRGBA(r: 0, g: 0, b: 0, a: 0);
 
   factory ColorRGBA.fromJson(Map<String, dynamic> json) {
     return ColorRGBA(
@@ -87,7 +85,7 @@ class ColorRGBA {
 class Empty {
   const Empty();
 
-  const Empty.zero();
+  static const zero = Empty();
 
   factory Empty.fromJson(Map<String, dynamic> json) => const Empty();
 
@@ -99,7 +97,7 @@ class Float32 {
 
   const Float32({required this.data});
 
-  const Float32.zero() : data = 0;
+  static const zero = Float32(data: 0);
 
   factory Float32.fromJson(Map<String, dynamic> json) {
     return Float32(data: (json['data'] as num).toDouble());
@@ -114,9 +112,7 @@ class Float32MultiArray {
 
   const Float32MultiArray({required this.layout, required this.data});
 
-  const Float32MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <double>[];
+  static const zero = Float32MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory Float32MultiArray.fromJson(Map<String, dynamic> json) {
     return Float32MultiArray(
@@ -133,7 +129,7 @@ class Float64 {
 
   const Float64({required this.data});
 
-  const Float64.zero() : data = 0;
+  static const zero = Float64(data: 0);
 
   factory Float64.fromJson(Map<String, dynamic> json) {
     return Float64(data: (json['data'] as num).toDouble());
@@ -148,9 +144,7 @@ class Float64MultiArray {
 
   const Float64MultiArray({required this.layout, required this.data});
 
-  const Float64MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <double>[];
+  static const zero = Float64MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory Float64MultiArray.fromJson(Map<String, dynamic> json) {
     return Float64MultiArray(
@@ -168,9 +162,7 @@ class Header {
 
   const Header({required this.stamp, required this.frameId});
 
-  const Header.zero()
-      : stamp = const BuiltinInterfacesTime.zero(),
-        frameId = '';
+  static const zero = Header(stamp: BuiltinInterfacesTime.zero, frameId: '');
 
   factory Header.fromJson(Map<String, dynamic> json) {
     return Header(
@@ -187,7 +179,7 @@ class Int16 {
 
   const Int16({required this.data});
 
-  const Int16.zero() : data = 0;
+  static const zero = Int16(data: 0);
 
   factory Int16.fromJson(Map<String, dynamic> json) {
     return Int16(data: (json['data'] as num).toInt());
@@ -202,9 +194,7 @@ class Int16MultiArray {
 
   const Int16MultiArray({required this.layout, required this.data});
 
-  const Int16MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = Int16MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory Int16MultiArray.fromJson(Map<String, dynamic> json) {
     return Int16MultiArray(
@@ -221,7 +211,7 @@ class Int32 {
 
   const Int32({required this.data});
 
-  const Int32.zero() : data = 0;
+  static const zero = Int32(data: 0);
 
   factory Int32.fromJson(Map<String, dynamic> json) {
     return Int32(data: (json['data'] as num).toInt());
@@ -236,9 +226,7 @@ class Int32MultiArray {
 
   const Int32MultiArray({required this.layout, required this.data});
 
-  const Int32MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = Int32MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory Int32MultiArray.fromJson(Map<String, dynamic> json) {
     return Int32MultiArray(
@@ -255,7 +243,7 @@ class Int64 {
 
   const Int64({required this.data});
 
-  const Int64.zero() : data = 0;
+  static const zero = Int64(data: 0);
 
   factory Int64.fromJson(Map<String, dynamic> json) {
     return Int64(data: (json['data'] as num).toInt());
@@ -270,9 +258,7 @@ class Int64MultiArray {
 
   const Int64MultiArray({required this.layout, required this.data});
 
-  const Int64MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = Int64MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory Int64MultiArray.fromJson(Map<String, dynamic> json) {
     return Int64MultiArray(
@@ -289,7 +275,7 @@ class Int8 {
 
   const Int8({required this.data});
 
-  const Int8.zero() : data = 0;
+  static const zero = Int8(data: 0);
 
   factory Int8.fromJson(Map<String, dynamic> json) {
     return Int8(data: (json['data'] as num).toInt());
@@ -304,9 +290,7 @@ class Int8MultiArray {
 
   const Int8MultiArray({required this.layout, required this.data});
 
-  const Int8MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = Int8MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory Int8MultiArray.fromJson(Map<String, dynamic> json) {
     return Int8MultiArray(
@@ -325,7 +309,7 @@ class MultiArrayDimension {
 
   const MultiArrayDimension({required this.label, required this.size, required this.stride});
 
-  const MultiArrayDimension.zero() : label = '', size = 0, stride = 0;
+  static const zero = MultiArrayDimension(label: '', size: 0, stride: 0);
 
   factory MultiArrayDimension.fromJson(Map<String, dynamic> json) {
     return MultiArrayDimension(
@@ -344,9 +328,7 @@ class MultiArrayLayout {
 
   const MultiArrayLayout({required this.dim, required this.dataOffset});
 
-  const MultiArrayLayout.zero()
-      : dim = const <MultiArrayDimension>[],
-        dataOffset = 0;
+  static const zero = MultiArrayLayout(dim: [], dataOffset: 0);
 
   factory MultiArrayLayout.fromJson(Map<String, dynamic> json) {
     return MultiArrayLayout(
@@ -370,7 +352,7 @@ class UInt16 {
 
   const UInt16({required this.data});
 
-  const UInt16.zero() : data = 0;
+  static const zero = UInt16(data: 0);
 
   factory UInt16.fromJson(Map<String, dynamic> json) {
     return UInt16(data: (json['data'] as num).toInt());
@@ -385,9 +367,7 @@ class UInt16MultiArray {
 
   const UInt16MultiArray({required this.layout, required this.data});
 
-  const UInt16MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = UInt16MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory UInt16MultiArray.fromJson(Map<String, dynamic> json) {
     return UInt16MultiArray(
@@ -404,7 +384,7 @@ class UInt32 {
 
   const UInt32({required this.data});
 
-  const UInt32.zero() : data = 0;
+  static const zero = UInt32(data: 0);
 
   factory UInt32.fromJson(Map<String, dynamic> json) {
     return UInt32(data: (json['data'] as num).toInt());
@@ -419,9 +399,7 @@ class UInt32MultiArray {
 
   const UInt32MultiArray({required this.layout, required this.data});
 
-  const UInt32MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = UInt32MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory UInt32MultiArray.fromJson(Map<String, dynamic> json) {
     return UInt32MultiArray(
@@ -438,7 +416,7 @@ class UInt64 {
 
   const UInt64({required this.data});
 
-  const UInt64.zero() : data = 0;
+  static const zero = UInt64(data: 0);
 
   factory UInt64.fromJson(Map<String, dynamic> json) {
     return UInt64(data: (json['data'] as num).toInt());
@@ -453,9 +431,7 @@ class UInt64MultiArray {
 
   const UInt64MultiArray({required this.layout, required this.data});
 
-  const UInt64MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = UInt64MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory UInt64MultiArray.fromJson(Map<String, dynamic> json) {
     return UInt64MultiArray(
@@ -472,7 +448,7 @@ class UInt8 {
 
   const UInt8({required this.data});
 
-  const UInt8.zero() : data = 0;
+  static const zero = UInt8(data: 0);
 
   factory UInt8.fromJson(Map<String, dynamic> json) {
     return UInt8(data: (json['data'] as num).toInt());
@@ -487,9 +463,7 @@ class UInt8MultiArray {
 
   const UInt8MultiArray({required this.layout, required this.data});
 
-  const UInt8MultiArray.zero()
-      : layout = const MultiArrayLayout.zero(),
-        data = const <int>[];
+  static const zero = UInt8MultiArray(layout: MultiArrayLayout.zero, data: []);
 
   factory UInt8MultiArray.fromJson(Map<String, dynamic> json) {
     return UInt8MultiArray(
@@ -506,7 +480,7 @@ class StdString {
 
   const StdString({required this.data});
 
-  const StdString.zero() : data = '';
+  static const zero = StdString(data: '');
 
   factory StdString.fromJson(Map<String, dynamic> json) {
     return StdString(data: json['data'] as String);

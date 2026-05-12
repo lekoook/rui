@@ -105,23 +105,24 @@ class BatteryState {
     required this.serialNumber,
   });
 
-  const BatteryState.zero()
-      : header = const Header.zero(),
-        voltage = 0,
-        temperature = 0,
-        current = 0,
-        charge = 0,
-        capacity = 0,
-        designCapacity = 0,
-        percentage = 0,
-        powerSupplyStatus = PowerSupplyStatus.unknown,
-        powerSupplyHealth = PowerSupplyHealth.unknown,
-        powerSupplyTechnology = PowerSupplyTechnology.unknown,
-        present = false,
-        cellVoltage = const <double>[],
-        cellTemperature = const <double>[],
-        location = '',
-        serialNumber = '';
+  static const zero = BatteryState(
+    header: Header.zero,
+    voltage: 0,
+    temperature: 0,
+    current: 0,
+    charge: 0,
+    capacity: 0,
+    designCapacity: 0,
+    percentage: 0,
+    powerSupplyStatus: PowerSupplyStatus.unknown,
+    powerSupplyHealth: PowerSupplyHealth.unknown,
+    powerSupplyTechnology: PowerSupplyTechnology.unknown,
+    present: false,
+    cellVoltage: [],
+    cellTemperature: [],
+    location: '',
+    serialNumber: '',
+  );
 
   factory BatteryState.fromJson(Map<String, dynamic> json) {
     return BatteryState(
@@ -191,18 +192,19 @@ class CameraInfo {
     required this.roi,
   });
 
-  const CameraInfo.zero()
-      : header = const Header.zero(),
-        height = 0,
-        width = 0,
-        distortionModel = '',
-        d = const <double>[],
-        k = const <double>[],
-        r = const <double>[],
-        p = const <double>[],
-        binningX = 0,
-        binningY = 0,
-        roi = const RegionOfInterest.zero();
+  static const zero = CameraInfo(
+    header: Header.zero,
+    height: 0,
+    width: 0,
+    distortionModel: '',
+    d: [],
+    k: [],
+    r: [],
+    p: [],
+    binningX: 0,
+    binningY: 0,
+    roi: RegionOfInterest.zero,
+  );
 
   factory CameraInfo.fromJson(Map<String, dynamic> json) {
     return CameraInfo(
@@ -241,7 +243,7 @@ class ChannelFloat32 {
 
   const ChannelFloat32({required this.name, required this.values});
 
-  const ChannelFloat32.zero() : name = '', values = const <double>[];
+  static const zero = ChannelFloat32(name: '', values: []);
 
   factory ChannelFloat32.fromJson(Map<String, dynamic> json) {
     return ChannelFloat32(
@@ -260,10 +262,7 @@ class CompressedImage {
 
   const CompressedImage({required this.header, required this.format, required this.data});
 
-  const CompressedImage.zero()
-      : header = const Header.zero(),
-        format = '',
-        data = const <int>[];
+  static const zero = CompressedImage(header: Header.zero, format: '', data: []);
 
   factory CompressedImage.fromJson(Map<String, dynamic> json) {
     return CompressedImage(
@@ -283,10 +282,7 @@ class FluidPressure {
 
   const FluidPressure({required this.header, required this.fluidPressure, required this.variance});
 
-  const FluidPressure.zero()
-      : header = const Header.zero(),
-        fluidPressure = 0,
-        variance = 0;
+  static const zero = FluidPressure(header: Header.zero, fluidPressure: 0, variance: 0);
 
   factory FluidPressure.fromJson(Map<String, dynamic> json) {
     return FluidPressure(
@@ -310,10 +306,7 @@ class Illuminance {
 
   const Illuminance({required this.header, required this.illuminance, required this.variance});
 
-  const Illuminance.zero()
-      : header = const Header.zero(),
-        illuminance = 0,
-        variance = 0;
+  static const zero = Illuminance(header: Header.zero, illuminance: 0, variance: 0);
 
   factory Illuminance.fromJson(Map<String, dynamic> json) {
     return Illuminance(
@@ -349,14 +342,15 @@ class Image {
     required this.data,
   });
 
-  const Image.zero()
-      : header = const Header.zero(),
-        height = 0,
-        width = 0,
-        encoding = '',
-        isBigendian = 0,
-        step = 0,
-        data = const <int>[];
+  static const zero = Image(
+    header: Header.zero,
+    height: 0,
+    width: 0,
+    encoding: '',
+    isBigendian: 0,
+    step: 0,
+    data: [],
+  );
 
   factory Image.fromJson(Map<String, dynamic> json) {
     return Image(
@@ -400,14 +394,15 @@ class Imu {
     required this.linearAccelerationCovariance,
   });
 
-  const Imu.zero()
-      : header = const Header.zero(),
-        orientation = const Quaternion.zero(),
-        orientationCovariance = const <double>[],
-        angularVelocity = const Vector3.zero(),
-        angularVelocityCovariance = const <double>[],
-        linearAcceleration = const Vector3.zero(),
-        linearAccelerationCovariance = const <double>[];
+  static const zero = Imu(
+    header: Header.zero,
+    orientation: Quaternion.zero,
+    orientationCovariance: [],
+    angularVelocity: Vector3.zero,
+    angularVelocityCovariance: [],
+    linearAcceleration: Vector3.zero,
+    linearAccelerationCovariance: [],
+  );
 
   factory Imu.fromJson(Map<String, dynamic> json) {
     return Imu(
@@ -447,12 +442,7 @@ class JointState {
     required this.effort,
   });
 
-  const JointState.zero()
-      : header = const Header.zero(),
-        name = const <String>[],
-        position = const <double>[],
-        velocity = const <double>[],
-        effort = const <double>[];
+  static const zero = JointState(header: Header.zero, name: [], position: [], velocity: [], effort: []);
 
   factory JointState.fromJson(Map<String, dynamic> json) {
     return JointState(
@@ -478,7 +468,7 @@ class JoyFeedbackArray {
 
   const JoyFeedbackArray({required this.array});
 
-  const JoyFeedbackArray.zero() : array = const <JoyFeedback>[];
+  static const zero = JoyFeedbackArray(array: []);
 
   factory JoyFeedbackArray.fromJson(Map<String, dynamic> json) {
     return JoyFeedbackArray(
@@ -502,7 +492,7 @@ class JoyFeedback {
 
   const JoyFeedback({required this.type, required this.id, required this.intensity});
 
-  const JoyFeedback.zero() : type = 0, id = 0, intensity = 0;
+  static const zero = JoyFeedback(type: 0, id: 0, intensity: 0);
 
   factory JoyFeedback.fromJson(Map<String, dynamic> json) {
     return JoyFeedback(
@@ -522,10 +512,7 @@ class Joy {
 
   const Joy({required this.header, required this.axes, required this.buttons});
 
-  const Joy.zero()
-      : header = const Header.zero(),
-        axes = const <double>[],
-        buttons = const <int>[];
+  static const zero = Joy(header: Header.zero, axes: [], buttons: []);
 
   factory Joy.fromJson(Map<String, dynamic> json) {
     return Joy(
@@ -543,7 +530,7 @@ class LaserEcho {
 
   const LaserEcho({required this.echoes});
 
-  const LaserEcho.zero() : echoes = const <double>[];
+  static const zero = LaserEcho(echoes: []);
 
   factory LaserEcho.fromJson(Map<String, dynamic> json) {
     return LaserEcho(
@@ -579,17 +566,18 @@ class LaserScan {
     required this.intensities,
   });
 
-  const LaserScan.zero()
-      : header = const Header.zero(),
-        angleMin = 0,
-        angleMax = 0,
-        angleIncrement = 0,
-        timeIncrement = 0,
-        scanTime = 0,
-        rangeMin = 0,
-        rangeMax = 0,
-        ranges = const <double>[],
-        intensities = const <double>[];
+  static const zero = LaserScan(
+    header: Header.zero,
+    angleMin: 0,
+    angleMax: 0,
+    angleIncrement: 0,
+    timeIncrement: 0,
+    scanTime: 0,
+    rangeMin: 0,
+    rangeMax: 0,
+    ranges: [],
+    intensities: [],
+  );
 
   factory LaserScan.fromJson(Map<String, dynamic> json) {
     return LaserScan(
@@ -631,10 +619,7 @@ class MagneticField {
     required this.magneticFieldCovariance,
   });
 
-  const MagneticField.zero()
-      : header = const Header.zero(),
-        magneticField = const Vector3.zero(),
-        magneticFieldCovariance = const <double>[];
+  static const zero = MagneticField(header: Header.zero, magneticField: Vector3.zero, magneticFieldCovariance: []);
 
   factory MagneticField.fromJson(Map<String, dynamic> json) {
     return MagneticField(
@@ -666,12 +651,13 @@ class MultiDOFJointState {
     required this.wrench,
   });
 
-  const MultiDOFJointState.zero()
-      : header = const Header.zero(),
-        jointNames = const <String>[],
-        transforms = const <Transform>[],
-        twist = const <Twist>[],
-        wrench = const <Wrench>[];
+  static const zero = MultiDOFJointState(
+    header: Header.zero,
+    jointNames: [],
+    transforms: [],
+    twist: [],
+    wrench: [],
+  );
 
   factory MultiDOFJointState.fromJson(Map<String, dynamic> json) {
     return MultiDOFJointState(
@@ -717,17 +703,18 @@ class MultiEchoLaserScan {
     required this.intensities,
   });
 
-  const MultiEchoLaserScan.zero()
-      : header = const Header.zero(),
-        angleMin = 0,
-        angleMax = 0,
-        angleIncrement = 0,
-        timeIncrement = 0,
-        scanTime = 0,
-        rangeMin = 0,
-        rangeMax = 0,
-        ranges = const <LaserEcho>[],
-        intensities = const <LaserEcho>[];
+  static const zero = MultiEchoLaserScan(
+    header: Header.zero,
+    angleMin: 0,
+    angleMax: 0,
+    angleIncrement: 0,
+    timeIncrement: 0,
+    scanTime: 0,
+    rangeMin: 0,
+    rangeMax: 0,
+    ranges: [],
+    intensities: [],
+  );
 
   factory MultiEchoLaserScan.fromJson(Map<String, dynamic> json) {
     return MultiEchoLaserScan(
@@ -782,14 +769,15 @@ class NavSatFix {
     required this.positionCovarianceType,
   });
 
-  const NavSatFix.zero()
-      : header = const Header.zero(),
-        status = const NavSatStatus.zero(),
-        latitude = 0,
-        longitude = 0,
-        altitude = 0,
-        positionCovariance = const <double>[],
-        positionCovarianceType = 0;
+  static const zero = NavSatFix(
+    header: Header.zero,
+    status: NavSatStatus.zero,
+    latitude: 0,
+    longitude: 0,
+    altitude: 0,
+    positionCovariance: [],
+    positionCovarianceType: 0,
+  );
 
   factory NavSatFix.fromJson(Map<String, dynamic> json) {
     return NavSatFix(
@@ -832,7 +820,7 @@ class NavSatStatus {
 
   const NavSatStatus({required this.status, required this.service});
 
-  const NavSatStatus.zero() : status = 0, service = 0;
+  static const zero = NavSatStatus(status: 0, service: 0);
 
   factory NavSatStatus.fromJson(Map<String, dynamic> json) {
     return NavSatStatus(
@@ -867,16 +855,17 @@ class PointCloud2 {
     required this.isDense,
   });
 
-  const PointCloud2.zero()
-      : header = const Header.zero(),
-        height = 0,
-        width = 0,
-        fields = const <PointField>[],
-        isBigendian = false,
-        pointStep = 0,
-        rowStep = 0,
-        data = const <int>[],
-        isDense = false;
+  static const zero = PointCloud2(
+    header: Header.zero,
+    height: 0,
+    width: 0,
+    fields: [],
+    isBigendian: false,
+    pointStep: 0,
+    rowStep: 0,
+    data: [],
+    isDense: false,
+  );
 
   factory PointCloud2.fromJson(Map<String, dynamic> json) {
     return PointCloud2(
@@ -912,10 +901,7 @@ class PointCloud {
 
   const PointCloud({required this.header, required this.points, required this.channels});
 
-  const PointCloud.zero()
-      : header = const Header.zero(),
-        points = const <Point32>[],
-        channels = const <ChannelFloat32>[];
+  static const zero = PointCloud(header: Header.zero, points: [], channels: []);
 
   factory PointCloud.fromJson(Map<String, dynamic> json) {
     return PointCloud(
@@ -952,7 +938,7 @@ class PointField {
 
   const PointField({required this.name, required this.offset, required this.datatype, required this.count});
 
-  const PointField.zero() : name = '', offset = 0, datatype = 0, count = 0;
+  static const zero = PointField(name: '', offset: 0, datatype: 0, count: 0);
 
   factory PointField.fromJson(Map<String, dynamic> json) {
     return PointField(
@@ -988,14 +974,15 @@ class Range {
     required this.variance,
   });
 
-  const Range.zero()
-      : header = const Header.zero(),
-        radiationType = 0,
-        fieldOfView = 0,
-        minRange = 0,
-        maxRange = 0,
-        range = 0,
-        variance = 0;
+  static const zero = Range(
+    header: Header.zero,
+    radiationType: 0,
+    fieldOfView: 0,
+    minRange: 0,
+    maxRange: 0,
+    range: 0,
+    variance: 0,
+  );
 
   factory Range.fromJson(Map<String, dynamic> json) {
     return Range(
@@ -1035,12 +1022,7 @@ class RegionOfInterest {
     required this.doRectify,
   });
 
-  const RegionOfInterest.zero()
-      : xOffset = 0,
-        yOffset = 0,
-        height = 0,
-        width = 0,
-        doRectify = false;
+  static const zero = RegionOfInterest(xOffset: 0, yOffset: 0, height: 0, width: 0, doRectify: false);
 
   factory RegionOfInterest.fromJson(Map<String, dynamic> json) {
     return RegionOfInterest(
@@ -1068,10 +1050,7 @@ class RelativeHumidity {
 
   const RelativeHumidity({required this.header, required this.relativeHumidity, required this.variance});
 
-  const RelativeHumidity.zero()
-      : header = const Header.zero(),
-        relativeHumidity = 0,
-        variance = 0;
+  static const zero = RelativeHumidity(header: Header.zero, relativeHumidity: 0, variance: 0);
 
   factory RelativeHumidity.fromJson(Map<String, dynamic> json) {
     return RelativeHumidity(
@@ -1095,10 +1074,7 @@ class Temperature {
 
   const Temperature({required this.header, required this.temperature, required this.variance});
 
-  const Temperature.zero()
-      : header = const Header.zero(),
-        temperature = 0,
-        variance = 0;
+  static const zero = Temperature(header: Header.zero, temperature: 0, variance: 0);
 
   factory Temperature.fromJson(Map<String, dynamic> json) {
     return Temperature(
@@ -1122,10 +1098,7 @@ class TimeReference {
 
   const TimeReference({required this.header, required this.timeRef, required this.source});
 
-  const TimeReference.zero()
-      : header = const Header.zero(),
-        timeRef = const BuiltinInterfacesTime.zero(),
-        source = '';
+  static const zero = TimeReference(header: Header.zero, timeRef: BuiltinInterfacesTime.zero, source: '');
 
   factory TimeReference.fromJson(Map<String, dynamic> json) {
     return TimeReference(

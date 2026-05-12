@@ -17,7 +17,7 @@ Widget robotStatusPanel() {
   vm.connectionStatusNotifier.value = RobotConnectionStatus.connected;
   vm.autonomyNotifier.value = AutonomyStatus.idle;
   vm.batteryStateNotifier.value = const BatteryState(
-    header: Header.zero(),
+    header: Header.zero,
     voltage: 0, temperature: 0, current: 0, charge: 0, capacity: 0,
     designCapacity: 0, percentage: 47.0, powerSupplyStatus: PowerSupplyStatus.unknown,
     powerSupplyHealth: PowerSupplyHealth.unknown, powerSupplyTechnology: PowerSupplyTechnology.unknown, present: false,

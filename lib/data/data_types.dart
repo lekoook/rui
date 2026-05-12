@@ -50,11 +50,11 @@ class MapInfo {
   const MapInfo({
     this.name = '',
     this.description = '',
-    this.home = const Pose.zero(),
+    this.home = Pose.zero,
     this.resolution = 0.0,
     this.width = 0.0,
     this.height = 0.0,
-    this.origin = const Pose.zero(),
+    this.origin = Pose.zero,
     this.mapImage
   });
 
@@ -66,6 +66,8 @@ class MapInfo {
   final double height;
   final Pose origin;
   final ui.Image? mapImage;
+
+  static const zero = MapInfo();
 
   factory MapInfo.fromJson(Map<String, dynamic> json) {
     return MapInfo(
@@ -82,7 +84,7 @@ class MapInfo {
 
 class MapStatus {
   const MapStatus({
-    this.currentMap = const MapInfo(),
+    this.currentMap = MapInfo.zero,
     this.mapsList = const [],
     this.mapMode = MapMode.localization
   });
@@ -90,6 +92,8 @@ class MapStatus {
   final MapInfo currentMap;
   final List<MapInfo> mapsList;
   final MapMode mapMode;
+
+  static const zero = MapStatus();
 
   factory MapStatus.fromJson(Map<String, dynamic> json) {
     final jsonMapsList = json['maps_list'] as List<dynamic>;

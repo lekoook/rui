@@ -21,7 +21,7 @@ Widget autonomyStatusLabel() {
 
 @Preview(name: 'Battery State Label', group: 'Labels')
 Widget batteryStateLabel() {
-  return BatteryStateLabel(state: BatteryState.zero());
+  return BatteryStateLabel(state: BatteryState.zero);
 }
 
 @Preview(name: 'Text With Icon', group: 'TextWithIcon')
