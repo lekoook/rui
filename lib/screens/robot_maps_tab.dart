@@ -118,7 +118,9 @@ class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProvide
     return Row(
       children: [
         Expanded(
-          child: GridView.count(
+          child: widget.mapStatusNotifier.value.mapsList.isEmpty
+          ? Center(child: Text('No maps to show', style: ShadTheme.of(context).textTheme.h3))
+          : GridView.count(
             padding: EdgeInsets.only(right: AppSpacing.lg),
             crossAxisSpacing: AppSpacing.md,
             mainAxisSpacing: AppSpacing.md,
@@ -194,7 +196,7 @@ class _MapInfoPanelState extends State<MapInfoPanel> {
               children: [
                 if (value.name.isEmpty)
                   Center(
-                    child: Text('Select a map', style: Theme.of(context).textTheme.titleLarge),
+                    child: Text('Select a map', style: ShadTheme.of(context).textTheme.h3),
                   ),
                 if (value.name.isNotEmpty) ...[
                   SizedBox(height: AppSpacing.md),
