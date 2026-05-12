@@ -74,13 +74,16 @@ class _RobotMainView extends State<RobotMainView> {
             spacing: AppSpacing.sm,
             children: [
               Expanded(
-                child: TabBarView(
-                  children: [
-                    RobotDashboard(robotStatusViewModel: robotStatusViewModel),
-                    RobotWaypoints(),
-                    _RobotMaps(robotStatusViewModel: robotStatusViewModel),
-                  ]
-                ),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  child: TabBarView(
+                    children: [
+                      RobotDashboard(robotStatusViewModel: robotStatusViewModel),
+                      RobotWaypoints(),
+                      _RobotMaps(robotStatusViewModel: robotStatusViewModel),
+                    ]
+                  ),
+                )
               ),
               RobotStatusFooterView(robotStatusViewModel: robotStatusViewModel)
             ],
@@ -275,7 +278,6 @@ class _RobotMapsHeaderState extends State<_RobotMapsHeader> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        AppBar(title: Text('Maps'),),
         Row(
           spacing: AppSpacing.sm,
           children: [
@@ -325,8 +327,11 @@ class _RobotMapsGrid extends StatefulWidget {
   State<StatefulWidget> createState() => _RobotMapsGridState();
 }
 
-class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProviderStateMixin {
+class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   final _selectedNotifier = ValueNotifier(MapInfo());
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   void initState() {
@@ -341,11 +346,12 @@ class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Row(
       children: [
         Expanded(
           child: GridView.count(
-            padding: EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            padding: EdgeInsets.only(right: AppSpacing.lg),
             crossAxisSpacing: AppSpacing.md,
             mainAxisSpacing: AppSpacing.md,
             crossAxisCount: 5,
@@ -418,6 +424,10 @@ class _MapInfoPanelState extends State<MapInfoPanel> {
             description: SelectableText(widget.mapInfoNotifier.value.description, maxLines: 4),
             child: Column(
               children: [
+                if (value.name.isEmpty)
+                  Center(
+                    child: Text('Select a map', style: Theme.of(context).textTheme.titleLarge),
+                  ),
                 if (value.name.isNotEmpty) ...[
                   SizedBox(height: AppSpacing.md),
                   Tooltip(
