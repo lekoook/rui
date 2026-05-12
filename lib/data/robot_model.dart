@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:js_interop';
-import 'dart:ui';
+import 'dart:ui' as ui;
 
 import 'errors.dart';
 import 'package:flutter/foundation.dart';
@@ -24,6 +24,7 @@ class RobotModel {
     'robot_pose' : _onRobotPose,
     'current_map' : _onCurrentMap,
     'map_status' : _onMapStatus,
+    'map_grid' : _onMapGrid,
   };
 
   String get robotName => 'Robot Name';
@@ -32,6 +33,60 @@ class RobotModel {
   ValueNotifier<Pose> get robotPose => _robotPose;
   ValueNotifier<MapInfo> get currentMap => _currentMap;
   ValueNotifier<MapStatus> get mapStatus => _mapStatus;
+
+  Future<ui.Image?> _decodeOccupancyGridToImage(OccupancyGrid grid) async {
+    if (grid.data == null || grid.info == null) {
+      return null;
+    }
+
+    final width = grid.info!.width ?? 0;
+    final height = grid.info!.height ?? 0;
+    final data = grid.data!;
+    
+    if (width <= 0 || height <= 0 || data.isEmpty) {
+      return null;
+    }
+
+    // Convert occupancy values to RGBA bytes
+    final rgbaBytes = Uint8List(width * height * 4);
+
+    for (int i = 0; i < data.length; i++) {
+      final occupancy = data[i];
+
+      // Convert ROS occupancy (-1=unknown, 0=free, 100=obstacle) to grayscale
+      int grayValue;
+      if (occupancy < 0) {
+        grayValue = 205; // unknown = light gray (matching test_map.png)
+      } else {
+        // Invert: 0 (free) -> 255 (white), 100 (obstacle) -> 0 (black)
+        grayValue = 255 - ((occupancy.clamp(0, 100) * 255) ~/ 100);
+      }
+
+      // Flip Y-axis: convert linear index to row/col, then flip row
+      final row = i ~/ width;
+      final col = i % width;
+      final flippedRow = height - 1 - row;
+      final flippedIndex = flippedRow * width + col;
+
+      // Set RGBA values (RGBA8888 format)
+      rgbaBytes[flippedIndex * 4] = grayValue;         // R
+      rgbaBytes[flippedIndex * 4 + 1] = grayValue;     // G
+      rgbaBytes[flippedIndex * 4 + 2] = grayValue;     // B
+      rgbaBytes[flippedIndex * 4 + 3] = 255;           // A (opaque)
+    }
+
+    // Create image from raw RGBA data
+    final descriptor = ui.ImageDescriptor.raw(
+      await ui.ImmutableBuffer.fromUint8List(rgbaBytes),
+      width: width,
+      height: height,
+      pixelFormat: ui.PixelFormat.rgba8888,
+    );
+
+    final codec = await descriptor.instantiateCodec();
+    final frame = await codec.getNextFrame();
+    return frame.image;
+  }
 
   Future<bool> _connectEventSource(String url) {
     final completer = Completer<bool>();
@@ -82,7 +137,11 @@ class RobotModel {
     final str = event.data.toString();
     try {
       final decoded = jsonDecode(str);
-      _robotPose.value = Pose.fromJson(decoded);
+      final pose = PoseWithCovarianceStamped.fromJson(decoded);
+      _robotPose.value = Pose(
+        position: Point(x: pose.posX, y: pose.posY, z: pose.posZ),
+        orientation: Quaternion(w: pose.oriW, x: pose.oriX, y: pose.oriY, z: pose.oriZ)
+      );
     } on FormatException catch (e) {
       print('robot_pose event invalid JSON: ${e.message}\n$str');
     } catch (e) {
@@ -94,7 +153,17 @@ class RobotModel {
     final str = event.data.toString();
     try {
       final decoded = jsonDecode(str);
-      _currentMap.value = MapInfo.fromJson(decoded);
+      final map = MapInfo.fromJson(decoded);
+      _currentMap.value = MapInfo(
+          name: map.name,
+          description: map.description,
+          home: map.home,
+          resolution: map.resolution,
+          width: map.width,
+          height: map.height,
+          origin: map.origin,
+          mapImage: _currentMap.value.mapImage
+        );
     } on FormatException catch (e) {
       print('current_map event invalid JSON: ${e.message}\n$str');
     } catch (e) {
@@ -114,6 +183,33 @@ class RobotModel {
     }
   }
 
+  void _onMapGrid(web.MessageEvent event) {
+    final str = event.data.toString();
+    try {
+      final decoded = jsonDecode(str);
+      final grid = OccupancyGrid.fromJson(decoded);
+      _decodeOccupancyGridToImage(grid).then((image) {
+        if (image != null) {
+          _currentMap.value = MapInfo(
+            name: _currentMap.value.name,
+            description: _currentMap.value.description,
+            home: _currentMap.value.home,
+            resolution: grid.info?.resolution ?? 0.0,
+            width: (grid.info?.width ?? 0.0).toDouble(),
+            height: (grid.info?.height ?? 0.0).toDouble(),
+            origin: grid.info?.origin ?? Pose(),
+            mapImage: image
+          );
+        }
+      });
+      print(grid);
+    } on FormatException catch (e) {
+      print('map_grid event invalid JSON: ${e.message}\n$str');
+    } catch (e) {
+      print('map_grid event unexpected JSON error: $e');
+    }
+  }
+
   Future<bool> connect(String host, int port) async {
     final eventSourceUri = Uri(scheme: 'http', host: host, port: port, path: 'events');
     return _connectEventSource(eventSourceUri.toString());
@@ -129,61 +225,15 @@ class RobotModel {
     final asset = 'test_map.png';
     final data = await rootBundle.load(asset);
     final bytes = data.buffer.asUint8List();
-    final codec = await instantiateImageCodec(bytes);
+    final codec = await ui.instantiateImageCodec(bytes);
     final frame = await codec.getNextFrame();
-
-    MapInfo curr = MapInfo(
-      name: 'test_map',
-      description: 'this is a test map. I put this description just so that there is several lines of text to be shown and tested on the UI.',
-      resolution: 0.05,
-      width: 1350,
-      height: 615,
-      origin: Pose(
-        posX: -45.916,
-        posY: -9.869
-      ),
-      mapImage: frame.image
-    );
-    MapInfo curr2 = MapInfo(
-      name: 'hello_world',
-      description: 'this is a hellllllo map. I put this description just so that there is several lines of text to be shown and tested on the UI.',
-      resolution: 0.05,
-      width: 1350,
-      height: 615,
-      origin: Pose(
-        posX: -45.916,
-        posY: -9.869
-      ),
-      mapImage: frame.image
-    );
-    MapStatus ms = MapStatus(
-      currentMap: curr,
-      mapsList: [
-        curr,
-        curr2,
-        curr,
-        curr2,
-        curr,
-        curr2,
-        curr,
-        curr,
-        curr,
-        curr2,
-        curr,
-        curr,
-        curr
-      ],
-      mapMode: MapMode.localization
-    );
-    _mapStatus.value = ms;
     return MapInfo(
       name: 'test_map',
       resolution: 0.05,
       width: 1350,
       height: 615,
       origin: Pose(
-        posX: -45.916,
-        posY: -9.869
+        position: Point(x: -45.916, y: -9.869)
       ),
       mapImage: frame.image
     );

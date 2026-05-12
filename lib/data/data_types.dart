@@ -89,6 +89,22 @@ enum BatteryPowerTech {
   final String label;
 }
 
+class Header {
+const Header({
+  this.stamp,
+  this.frameId
+});
+  final DateTime? stamp;
+  final String? frameId;
+
+  factory Header.fromJson(Map<String, dynamic> json) {
+    return Header(
+      // stamp: json['stamp'],
+      frameId: json['frame_id'],
+    );
+  }
+}
+
 class BatteryState {
   BatteryState({
     this.location = '',
@@ -142,8 +158,86 @@ class BatteryState {
   final List<double> cellTemperature;
 }
 
+class Point {
+  const Point({
+    this.x,
+    this.y,
+    this.z
+  });
+
+  final double? x;
+  final double? y;
+  final double? z;
+
+  factory Point.fromJson(Map<String, dynamic> json) {
+    return Point(
+      x: json['x'],
+      y: json['y'],
+      z: json['z'],
+    );
+  }
+}
+
+class Quaternion {
+  const Quaternion({
+    this.w,
+    this.x,
+    this.y,
+    this.z
+  });
+
+  final double? w;
+  final double? x;
+  final double? y;
+  final double? z;
+
+  factory Quaternion.fromJson(Map<String, dynamic> json) {
+    return Quaternion(
+      w: json['w'],
+      x: json['x'],
+      y: json['y'],
+      z: json['z'],
+    );
+  }
+}
+
 class Pose {
   const Pose({
+    this.position,
+    this.orientation
+  });
+
+  final Point? position;
+  final Quaternion? orientation;
+
+  double get yaw => _getYaw();
+
+  double _getYaw() {
+    if (position == null || orientation == null) {
+      return 0.0;
+    }
+    return atan2(2 * (orientation!.w! * orientation!.z! + orientation!.x! * orientation!.y!), 1 - 2 * (orientation!.y! * orientation!.y! + orientation!.z! * orientation!.z!));
+  }
+
+  factory Pose.fromJson(Map<String, dynamic> json) {
+    return Pose(
+      position: Point.fromJson(json['position']),
+      orientation: Quaternion.fromJson(json['orientation'])
+    );
+  }
+
+  @override
+  String toString() {
+    return 'px: ${position?.x?.toStringAsFixed(3)}, py: ${position?.y?.toStringAsFixed(3)}, pz: ${position?.z?.toStringAsFixed(3)}, ow: ${orientation?.w?.toStringAsFixed(3)}, ox: ${orientation?.x?.toStringAsFixed(3)}, oy: ${orientation?.y?.toStringAsFixed(3)}, oz: ${orientation?.z?.toStringAsFixed(3)}';
+  }
+
+  String toString2D() {
+    return 'px: ${position?.x?.toStringAsFixed(3)},\npy: ${position?.y?.toStringAsFixed(3)},\nyaw: ${position?.z?.toStringAsFixed(3)}';
+  }
+}
+
+class PoseWithCovarianceStamped {
+  const PoseWithCovarianceStamped({
     this.posX = 0.0,
     this.posY = 0.0,
     this.posZ = 0.0,
@@ -167,8 +261,8 @@ class Pose {
     return atan2(2 * (oriW * oriZ + oriX * oriY), 1 - 2 * (oriY * oriY + oriZ * oriZ));
   }
 
-  factory Pose.fromJson(Map<String, dynamic> json) {
-    return Pose(
+  factory PoseWithCovarianceStamped.fromJson(Map<String, dynamic> json) {
+    return PoseWithCovarianceStamped(
       posX: json['pose']['pose']['position']['x'],
       posY: json['pose']['pose']['position']['y'],
       posZ: json['pose']['pose']['position']['z'],
@@ -186,6 +280,52 @@ class Pose {
 
   String toString2D() {
     return 'px: ${posX.toStringAsFixed(3)},\npy: ${posY.toStringAsFixed(3)},\nyaw: ${yaw.toStringAsFixed(3)}';
+  }
+}
+
+class MapMetaData {
+  const MapMetaData({
+    this.mapLoadTime,
+    this.resolution,
+    this.width,
+    this.height,
+    this.origin
+  });
+
+  final DateTime? mapLoadTime;
+  final double? resolution;
+  final int? width;
+  final int? height;
+  final Pose? origin;
+
+  factory MapMetaData.fromJson(Map<String, dynamic> json) {
+    return MapMetaData(
+      // mapLoadTime: json['map_load_time'],
+      resolution: json['resolution'],
+      width: json['width'],
+      height: json['height'],
+      origin: Pose.fromJson(json['origin']),
+    );
+  }
+}
+
+class OccupancyGrid {
+  const OccupancyGrid({
+    this.header,
+    this.info,
+    this.data
+  });
+
+  final Header? header;
+  final MapMetaData? info;
+  final List<int>? data;
+
+  factory OccupancyGrid.fromJson(Map<String, dynamic> json) {
+    return OccupancyGrid(
+      header: Header.fromJson(json['header']),
+      info: MapMetaData.fromJson(json['info']),
+      data: (json['data'] as List<dynamic>?)?.cast<int>(),
+    );
   }
 }
 
@@ -215,7 +355,7 @@ class MapInfo {
       name: json['name'],
       description: json['description'],
       // TODO: Implement on ROS side.
-      // home: Pose.fromJson(json['home']),
+      home: Pose.fromJson(json['home']),
       // resolution: json['resolution'],
       // width: json['width'],
       // height: json['height'],

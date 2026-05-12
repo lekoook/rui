@@ -58,7 +58,10 @@ class HomeMarker extends MapMarker {
     double size = 20,
     Color color = Colors.blueAccent
   }) : super(
-    marker: Icon(Icons.home, color: color),
+    marker: Transform.rotate(
+      angle: -pi / 2.0,
+      child: Icon(Icons.home, color: color),
+    ),
     width: size,
     height: size
   );
@@ -203,11 +206,11 @@ void _fitToScreen() {
                                     valueListenable: marker.pose,
                                     builder: (context, value, child) {
                                       Offset pos = _worldToMap(
-                                        mx: value.posX,
-                                        my: value.posY,
+                                        mx: value.position?.x ?? 0.0,
+                                        my: value.position?.y ?? 0.0,
                                         resolution: widget.mapData.resolution,
-                                        originX: widget.mapData.origin.posX,
-                                        originY: widget.mapData.origin.posY,
+                                        originX: widget.mapData.origin.position?.x ?? 0.0,
+                                        originY: widget.mapData.origin.position?.y ?? 0.0,
                                         mapHeight: widget.mapData.height
                                       );
                                       return Positioned(
