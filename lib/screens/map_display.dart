@@ -84,6 +84,7 @@ class MapDisplay extends StatefulWidget {
 class _MapDisplayState extends State<MapDisplay> with AutomaticKeepAliveClientMixin {
   static const double _minScale = 1.0;
   static const double _maxScale = 10.0;
+  bool _noMap = false;
   final TransformationController _transformController = TransformationController();
   final _popoverController = ShadPopoverController();
   final GlobalKey _stackKey = GlobalKey();
@@ -94,17 +95,15 @@ class _MapDisplayState extends State<MapDisplay> with AutomaticKeepAliveClientMi
   bool get wantKeepAlive => true;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
     _transformController.dispose();
     super.dispose();
   }
 
 void _fitToScreen() {
+  if (_noMap) {
+    return;
+  }
   final scaleX = _viewerConstraints.maxWidth / widget.mapData.width;
   final scaleY = _viewerConstraints.maxHeight / widget.mapData.height;
   final scale = min(scaleX, scaleY);
@@ -117,6 +116,9 @@ void _fitToScreen() {
 }
 
   void _setScale(double scale, double min, double max) {
+    if (_noMap) {
+      return;
+    }
     // Normalize the given scale to the display's range.
     final norm = (scale - min) / (max - min);
     final scaleToUse = norm * (_maxScale - _minScale) + _minScale;
@@ -145,6 +147,7 @@ void _fitToScreen() {
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    _noMap = widget.mapData.mapImage == null;
     return LayoutBuilder(
       builder: (context, constraints) {
         return ConstrainedBox(
@@ -179,7 +182,9 @@ void _fitToScreen() {
                   key: _stackKey,
                   children: [
                     // WORLD LAYER
-                    LayoutBuilder(
+                    _noMap
+                    ? Center(child: Text('No map to display', style: ShadTheme.of(context).textTheme.h3))
+                    : LayoutBuilder(
                       builder: (context, constraints) {
                         _viewerConstraints = constraints;
                         return InteractiveViewer(
