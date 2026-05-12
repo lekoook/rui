@@ -12,3 +12,9 @@ class AppAnimate {
   static const Duration medium = Duration(milliseconds: 400);
   static const Duration long = Duration(milliseconds: 600);
 }
+
+class IconSize {
+  static const double sm = 24;
+  static const double md = 36;
+  static const double lg = 48;
+}
