@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
-import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/data/robot_view_model.dart';
 import 'package:rui/data/sensor_msgs.dart';
 import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/labels.dart';
@@ -19,11 +19,11 @@ class RobotMainView extends StatefulWidget {
 
 class _RobotMainView extends State<RobotMainView> {
   _RobotMainView() : robotModel = RobotModel() {
-    robotStatusViewModel = RobotStatusViewModel(robotModel: robotModel);
+    robotStatusViewModel = RobotViewModel(robotModel: robotModel);
   }
 
   RobotModel robotModel;
-  late RobotStatusViewModel robotStatusViewModel;
+  late RobotViewModel robotStatusViewModel;
   static const List<Tab> tabsList = <Tab>[
     Tab(text: 'Dashboard',),
     Tab(text: 'Waypoints',),
@@ -77,7 +77,7 @@ class _RobotMainView extends State<RobotMainView> {
 class RobotHeaderView extends StatelessWidget {
   const RobotHeaderView({required this.robotStatusViewModel, super.key});
 
-  final RobotStatusViewModel robotStatusViewModel;
+  final RobotViewModel robotStatusViewModel;
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +116,7 @@ class RobotHeaderView extends StatelessWidget {
 class RobotStatusFooterView extends StatefulWidget {
   const RobotStatusFooterView({required this.robotStatusViewModel, super.key});
 
-  final RobotStatusViewModel robotStatusViewModel;
+  final RobotViewModel robotStatusViewModel;
 
   @override
   State<StatefulWidget> createState() => _RobotStatusFooterViewState();

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/data/robot_view_model.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 class RobotSummaryPanel extends StatelessWidget {
@@ -8,7 +8,7 @@ class RobotSummaryPanel extends StatelessWidget {
     required this.robotStatusViewModel
   });
 
-  final RobotStatusViewModel robotStatusViewModel;
+  final RobotViewModel robotStatusViewModel;
 
   @override
   Widget build(BuildContext context) {

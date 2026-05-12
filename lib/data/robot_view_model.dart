@@ -5,8 +5,8 @@ import 'package:rui/data/geometry_msgs.dart';
 import 'package:rui/data/sensor_msgs.dart';
 import 'package:rui/data/robot_model.dart';
 
-class RobotStatusViewModel {
-  RobotStatusViewModel({
+class RobotViewModel {
+  RobotViewModel({
     required RobotModel robotModel
   }) :
     _robotModel = robotModel,

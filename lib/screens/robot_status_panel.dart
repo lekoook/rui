@@ -5,7 +5,7 @@ import 'package:rui/data/geometry_msgs.dart';
 import 'package:rui/data/sensor_msgs.dart';
 import 'package:rui/data/std_msgs.dart';
 import 'package:rui/data/robot_model.dart';
-import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/data/robot_view_model.dart';
 import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/labels.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -13,7 +13,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 @Preview(name: "Robot Status Panel")
 Widget robotStatusPanel() {
   final rm = RobotModel();
-  final vm = RobotStatusViewModel(robotModel: rm);
+  final vm = RobotViewModel(robotModel: rm);
   vm.connectionNotifier.value = RobotConnectionStatus.connected;
   vm.autonomyNotifier.value = AutonomyStatus.idle;
   vm.batteryStateNotifier.value = const BatteryState(
@@ -29,7 +29,7 @@ Widget robotStatusPanel() {
 class RobotStatusPanel extends StatelessWidget {
   const RobotStatusPanel({required this.robotStatusViewModel, super.key});
 
-  final RobotStatusViewModel robotStatusViewModel;
+  final RobotViewModel robotStatusViewModel;
 
   @override
   Widget build(BuildContext context) {

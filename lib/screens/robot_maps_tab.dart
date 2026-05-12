@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
-import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/data/robot_view_model.dart';
 import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/map_display.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -10,7 +10,7 @@ import 'package:shadcn_ui/shadcn_ui.dart';
 @Preview(name: 'Robot Maps')
 Widget robotMapsTab() {
   final rm = RobotModel();
-  final vm = RobotStatusViewModel(robotModel: rm);
+  final vm = RobotViewModel(robotModel: rm);
   return ShadApp(
     builder: (context, app) {
       return RobotMapsTab(robotStatusViewModel: vm);
@@ -24,7 +24,7 @@ class RobotMapsTab extends StatefulWidget {
     required this.robotStatusViewModel
   });
 
-  final RobotStatusViewModel robotStatusViewModel;
+  final RobotViewModel robotStatusViewModel;
 
   @override
   State<StatefulWidget> createState() => _RobotMapsTabState();
