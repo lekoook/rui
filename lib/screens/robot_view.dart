@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_status_view_model.dart';
+import 'package:rui/data/sensor_msgs.dart';
 import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/labels.dart';
 import 'package:rui/screens/popovers.dart';

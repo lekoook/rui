@@ -7,6 +7,9 @@ import 'errors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/geometry_msgs.dart';
+import 'package:rui/data/nav_msgs.dart';
+import 'package:rui/data/sensor_msgs.dart';
 import 'package:web/web.dart' as web;
 
 class RobotModel {
@@ -14,8 +17,8 @@ class RobotModel {
 
   web.EventSource _eventSource = web.EventSource('');
   final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
-  final _batteryState = ValueNotifier(BatteryState());
-  final _robotPose = ValueNotifier(Pose());
+  final _batteryState = ValueNotifier(const BatteryState.zero());
+  final _robotPose = ValueNotifier(const Pose.zero());
   final _currentMap = ValueNotifier(MapInfo());
   final _mapStatus = ValueNotifier(MapStatus());
 
@@ -35,13 +38,9 @@ class RobotModel {
   ValueNotifier<MapStatus> get mapStatus => _mapStatus;
 
   Future<ui.Image?> _decodeOccupancyGridToImage(OccupancyGrid grid) async {
-    if (grid.data == null || grid.info == null) {
-      return null;
-    }
-
-    final width = grid.info!.width ?? 0;
-    final height = grid.info!.height ?? 0;
-    final data = grid.data!;
+    final width = grid.info.width;
+    final height = grid.info.height;
+    final data = grid.data;
     
     if (width <= 0 || height <= 0 || data.isEmpty) {
       return null;
@@ -139,8 +138,8 @@ class RobotModel {
       final decoded = jsonDecode(str);
       final pose = PoseWithCovarianceStamped.fromJson(decoded);
       _robotPose.value = Pose(
-        position: Point(x: pose.posX, y: pose.posY, z: pose.posZ),
-        orientation: Quaternion(w: pose.oriW, x: pose.oriX, y: pose.oriY, z: pose.oriZ)
+        position: Point(x: pose.pose.pose.position.x, y: pose.pose.pose.position.y, z: pose.pose.pose.position.z),
+        orientation: Quaternion(x: pose.pose.pose.orientation.x, y: pose.pose.pose.orientation.y, z: pose.pose.pose.orientation.z, w: pose.pose.pose.orientation.w),
       );
     } on FormatException catch (e) {
       print('robot_pose event invalid JSON: ${e.message}\n$str');
@@ -194,10 +193,10 @@ class RobotModel {
             name: _currentMap.value.name,
             description: _currentMap.value.description,
             home: _currentMap.value.home,
-            resolution: grid.info?.resolution ?? 0.0,
-            width: (grid.info?.width ?? 0.0).toDouble(),
-            height: (grid.info?.height ?? 0.0).toDouble(),
-            origin: grid.info?.origin ?? Pose(),
+            resolution: grid.info.resolution,
+            width: grid.info.width.toDouble(),
+            height: grid.info.height.toDouble(),
+            origin: _currentMap.value.home,
             mapImage: image
           );
         }
@@ -232,8 +231,9 @@ class RobotModel {
       resolution: 0.05,
       width: 1350,
       height: 615,
-      origin: Pose(
-        position: Point(x: -45.916, y: -9.869)
+      origin: const Pose(
+        position: Point(x: -45.916, y: -9.869, z: 0),
+        orientation: Quaternion(x: 0, y: 0, z: 0, w: 1),
       ),
       mapImage: frame.image
     );

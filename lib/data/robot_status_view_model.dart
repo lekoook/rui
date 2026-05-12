@@ -1,6 +1,8 @@
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/geometry_msgs.dart';
+import 'package:rui/data/sensor_msgs.dart';
 import 'package:rui/data/robot_model.dart';
 
 class RobotStatusViewModel {

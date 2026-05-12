@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/geometry_msgs.dart';
+import 'package:rui/data/sensor_msgs.dart';
 
 @Preview(name: "Text Label", group: 'Labels')
 Widget textLabel() {
@@ -19,7 +21,7 @@ Widget autonomyStatusLabel() {
 
 @Preview(name: 'Battery State Label', group: 'Labels')
 Widget batteryStateLabel() {
-  return BatteryStateLabel(state: BatteryState(percentage: .0));
+  return BatteryStateLabel(state: BatteryState.zero());
 }
 
 @Preview(name: 'Text With Icon', group: 'TextWithIcon')

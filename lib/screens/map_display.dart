@@ -3,6 +3,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/geometry_msgs.dart' hide Transform;
 import 'package:rui/screens/buttons.dart';
 import 'package:rui/screens/cards.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -211,11 +212,11 @@ void _fitToScreen() {
                                     valueListenable: marker.pose,
                                     builder: (context, value, child) {
                                       Offset pos = _worldToMap(
-                                        mx: value.position?.x ?? 0.0,
-                                        my: value.position?.y ?? 0.0,
+                                        mx: value.position.x,
+                                        my: value.position.y,
                                         resolution: widget.mapData.resolution,
-                                        originX: widget.mapData.origin.position?.x ?? 0.0,
-                                        originY: widget.mapData.origin.position?.y ?? 0.0,
+                                        originX: widget.mapData.origin.position.x,
+                                        originY: widget.mapData.origin.position.y,
                                         mapHeight: widget.mapData.height
                                       );
                                       return Positioned(
