@@ -365,7 +365,12 @@ class _MapHUDState extends State<_MapHUD> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 5.0,
                     children: [
-                      Text(_sliderController.value.toStringAsFixed(1), style: Theme.of(context).primaryTextTheme.labelLarge),
+                      Text(
+                        _sliderController.value.toStringAsFixed(1),
+                        style: ShadTheme.of(context).textTheme.p.copyWith(
+                          shadows: [Shadow(color: ShadTheme.of(context).colorScheme.background, blurRadius: 5)]
+                        )
+                      ),
                       ShadSlider(
                         controller: _sliderController,
                         divisions: 100,
