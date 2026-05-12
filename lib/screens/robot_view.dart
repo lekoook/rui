@@ -357,24 +357,30 @@ class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProvide
             scrollDirection: Axis.vertical,
             children: [
               ...widget.mapStatusNotifier.value.mapsList.map((map) {
-                return ShadGestureDetector(
-                  onTap: () => _selectedNotifier.value = map,
-                  onDoubleTap: () {
-                    // TODO: Open map display.
-                  },
-                  child: ShadCard(
-                    title: Text(map.name),
-                    description: Text(map.description, maxLines: 2, overflow: TextOverflow.fade),
-                    child: Center(
-                      child: FittedBox(
-                        fit: BoxFit.contain,
-                        child: CustomPaint(
-                          // TODO: Temporary draw the same map image until we figure out how to receive image over the network.
-                          size: Size(widget.mapStatusNotifier.value.currentMap.width, widget.mapStatusNotifier.value.currentMap.height),
-                          painter: MapPainter(mapImage: widget.mapStatusNotifier.value.currentMap.mapImage),
-                        ),
+                return ShadContextMenuRegion(
+                  items: [
+                    ShadContextMenuItem.inset(child: Text('Load')),
+                    ShadContextMenuItem.inset(child: Text('Edit')),
+                  ],
+                  child: ShadGestureDetector(
+                    onTap: () => _selectedNotifier.value = map,
+                    onDoubleTap: () {
+                      // TODO: Open map display.
+                    },
+                    child: ShadCard(
+                      title: Text(map.name),
+                      description: Text(map.description, maxLines: 2, overflow: TextOverflow.fade),
+                      child: Center(
+                        child: FittedBox(
+                          fit: BoxFit.contain,
+                          child: CustomPaint(
+                            // TODO: Temporary draw the same map image until we figure out how to receive image over the network.
+                            size: Size(widget.mapStatusNotifier.value.currentMap.width, widget.mapStatusNotifier.value.currentMap.height),
+                            painter: MapPainter(mapImage: widget.mapStatusNotifier.value.currentMap.mapImage),
+                          ),
+                        )
                       )
-                    )
+                    ),
                   )
                 );
               })
