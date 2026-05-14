@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
+import 'package:rui/data/geometry_msgs.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_view_model.dart';
 import 'package:rui/screens/app_constants.dart';
@@ -58,7 +59,7 @@ class _RobotDashboard extends State<RobotDashboardTab> {
                   return MapDisplay(
                     mapData: widget.robotStatusViewModel.currentMapNotifier.value,
                     mapMarkers: [
-                      HomeMarker(pose: ValueNotifier(widget.robotStatusViewModel.currentMapNotifier.value.home)), // TODO: Temp.
+                      HomeMarker(pose: ValueNotifier(Pose(position: Point(x: -3, y: -3, z: 0), orientation: Quaternion.zero))), // TODO: Temp.
                       RobotMarker(pose: widget.robotStatusViewModel.robotPoseNotifier),
                     ],
                   );

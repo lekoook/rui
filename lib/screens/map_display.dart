@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/geometry_msgs.dart' hide Transform;
+import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/buttons.dart';
 import 'package:rui/screens/cards.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
@@ -15,7 +16,7 @@ class MapMarker {
     required this.pose,
     required this.width,
     required this.height,
-    this.popoverWidget
+    this.popupWidget
   });
 
   final LayerLink layerLink = LayerLink();
@@ -23,7 +24,7 @@ class MapMarker {
   final ValueNotifier<Pose> pose;
   final double width;
   final double height;
-  final Widget? popoverWidget;
+  final Widget? popupWidget;
   final ValueNotifier<bool> hiddenNotifier = ValueNotifier(false);
 }
 
@@ -39,15 +40,11 @@ class RobotMarker extends MapMarker {
     ),
     width: size,
     height: size,
-    popoverWidget: SizedBox(
-      width: 300,
-      height: 300,
-      child: Column(
-        children: [
-          // TODO: Create popover widget.
-          // Text('Title'),
-          // Text('Description')
-        ],
+    popupWidget: SizedBox(
+      width: 100,
+      height: 100,
+      child: ShadCard(
+        // TODO:
       ),
     )
   );
@@ -60,11 +57,18 @@ class HomeMarker extends MapMarker {
     Color color = Colors.blueAccent
   }) : super(
     marker: Transform.rotate(
-      angle: -pi / 2.0,
+      angle: pi / 2.0,
       child: Icon(Icons.home, color: color),
     ),
     width: size,
-    height: size
+    height: size,
+    popupWidget: SizedBox(
+      width: 100,
+      height: 100,
+      child: ShadCard(
+        // TODO:
+      ),
+    )
   );
 }
 
@@ -91,6 +95,7 @@ class _MapDisplayState extends State<MapDisplay> with AutomaticKeepAliveClientMi
   final GlobalKey _stackKey = GlobalKey();
   BoxConstraints _viewerConstraints = BoxConstraints();
   final ValueNotifier<double> _selectedScaleNotifier = ValueNotifier(1.0);
+  final Set<MapMarker> _selectedMarkers = {};
 
   @override
   bool get wantKeepAlive => true;
@@ -188,7 +193,13 @@ void _fitToScreen() {
                     : LayoutBuilder(
                       builder: (context, constraints) {
                         _viewerConstraints = constraints;
-                        return InteractiveViewer(
+                        return GestureDetector(
+                          onTap:() {
+                            setState(() {
+                              _selectedMarkers.clear();
+                            });
+                          },
+                          child: InteractiveViewer(
                           transformationController: _transformController,
                           minScale: _minScale,
                           maxScale: _maxScale,
@@ -232,7 +243,15 @@ void _fitToScreen() {
                                               width: marker.width,
                                               height: marker.height,
                                               hiddenNotifier: marker.hiddenNotifier,
-                                              onTap: (){},
+                                              onTap: (){
+                                                setState(() {
+                                                  if (_selectedMarkers.contains(marker)) {
+                                                    _selectedMarkers.remove(marker);
+                                                  } else {
+                                                    _selectedMarkers.add(marker);
+                                                  }
+                                                });
+                                              },
                                               onSecondaryTapDown:(details) {},
                                             )
                                           )
@@ -244,39 +263,30 @@ void _fitToScreen() {
                               ],
                             ),
                           ),
-                        );
+                        ));
                       }
                     ),
                     // LIGHTWEIGHT OVERLAY LAYER
                     Positioned.fill(
-                      child: AnimatedBuilder(
-                        animation: _transformController,
-                        builder: (context, child) {
-                          return Stack(
-                            children: [
-                              ...widget.mapMarkers.map((marker) {
-                                return CompositedTransformFollower(
-                                  link: marker.layerLink,
-                                  child: _OverlayMarker(
-                                    popoverWidget: marker.popoverWidget,
-                                    width: marker.width,
-                                    height: marker.height,
-                                    onTap: () {},
-                                    onSecondaryTap: () {},
-                                  ),
-                                );
-                              }),
-                            ],
-                          );
-                        },
-                      ),
+                      child: Stack(
+                        children: [
+                          ..._selectedMarkers.map((marker) {
+                            return CompositedTransformFollower(
+                              link: marker.layerLink,
+                              offset: Offset(marker.width / 2.0, marker.height / 2.0 + AppSpacing.sm),
+                              followerAnchor: Alignment.topCenter,
+                              child: _OverlayPopup(hiddenNotifier: marker.hiddenNotifier, child: marker.popupWidget),
+                            );
+                          })
+                        ],
+                      )
                     ),
                     // HUD LAYER
                     Positioned(
-                      top: 10,
-                      right: 10,
-                      bottom: 10,
-                      left: 10,
+                      top: AppSpacing.sm,
+                      right: AppSpacing.sm,
+                      bottom: AppSpacing.sm,
+                      left: AppSpacing.sm,
                       child: _MapHUD(
                         selectedScaleNotifier: _selectedScaleNotifier,
                         scaleMin: _minScale,
@@ -418,7 +428,7 @@ class _MapHUDState extends State<_MapHUD> {
                     },
                   ),
                   builder: (context) {
-                    return _markersHidden.value ? Text('Set markers visible') : Text('Set markers hidden');
+                    return _markersHidden.value ? Text('Show markers') : Text('Hide markers');
                   }
                 );
               }
@@ -490,12 +500,13 @@ class _InteractiveViewMarkerState extends State<_InteractiveViewMarker> {
             child: ValueListenableBuilder(
               valueListenable: widget.hiddenNotifier,
               builder: (context, hidden, child) {
-                return hidden ? Container()
-                  : SizedBox(
-                    width: widget.width,
-                    height: widget.height,
-                    child: widget.marker,
-                  );
+                return hidden
+                ? Container()
+                : SizedBox(
+                  width: widget.width,
+                  height: widget.height,
+                  child: widget.marker,
+                );
               }
             )
           ),
@@ -505,53 +516,39 @@ class _InteractiveViewMarkerState extends State<_InteractiveViewMarker> {
   }
 }
 
-class _OverlayMarker extends StatefulWidget {
-  const _OverlayMarker({
-    this.popoverWidget,
-    required this.width,
-    required this.height,
-    required this.onTap,
-    required this.onSecondaryTap,
+class _OverlayPopup extends StatefulWidget {
+  const _OverlayPopup({
+    required this.hiddenNotifier,
+    this.child
   });
 
-  final Widget? popoverWidget;
-  final double width;
-  final double height;
-  final VoidCallback onTap;
-  final VoidCallback onSecondaryTap;
+  final ValueNotifier<bool> hiddenNotifier;
+  final Widget? child;
 
   @override
-  State<StatefulWidget> createState() => _OverlayMarkerState();
+  State<StatefulWidget> createState() => _OverlayPopupState();
 }
 
-class _OverlayMarkerState extends State<_OverlayMarker> {
+class _OverlayPopupState extends State<_OverlayPopup> {
   final _popoverController = ShadPopoverController();
 
   @override
+  void initState() {
+    _popoverController.show();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return MouseRegion(
-      hitTestBehavior: HitTestBehavior.translucent,
-      opaque: false,
-      child: GestureDetector(
-        onTap: () {
-          if (widget.popoverWidget != null) {
-            _popoverController.toggle();
-          }
-          widget.onTap();
-        },
-        onSecondaryTap: widget.onSecondaryTap,
-        child: SizedBox(
-          width: widget.width,
-          height: widget.height,
-          child: ShadPopover(
-            controller: _popoverController,
-            popover: (context) {
-              return widget.popoverWidget ?? SizedBox();
-            },
-            child: Text(''),
-          ),
-        ),
-      ),
+    return ValueListenableBuilder(
+      valueListenable: widget.hiddenNotifier,
+      builder: (context, value, child) {
+        if (widget.child == null || value) {
+          return Container();
+        } else {
+          return widget.child!;
+        }
+      }
     );
   }
 }

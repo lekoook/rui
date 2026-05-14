@@ -226,7 +226,7 @@ class RobotModel {
     final bytes = data.buffer.asUint8List();
     final codec = await ui.instantiateImageCodec(bytes);
     final frame = await codec.getNextFrame();
-    return MapInfo(
+    _currentMap.value = MapInfo(
       name: 'test_map',
       resolution: 0.05,
       width: 1350,
@@ -237,6 +237,7 @@ class RobotModel {
       ),
       mapImage: frame.image
     );
+    return _currentMap.value;
   }
 
   void dispose() {
