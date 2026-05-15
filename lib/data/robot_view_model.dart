@@ -1,7 +1,10 @@
 import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/enums.dart';
 import 'package:rui/data/geometry_msgs.dart';
+import 'package:rui/data/rbot_map_management_msgs.dart';
 import 'package:rui/data/sensor_msgs.dart';
 import 'package:rui/data/robot_model.dart';
 
@@ -28,7 +31,7 @@ class RobotViewModel {
   ValueNotifier<Pose> get robotPoseNotifier => _robotModel.robotPose;
   ValueNotifier<MapInfo> get currentMapNotifier => _robotModel.currentMap;
   ValueNotifier<MapStatus> get mapStatusNotifier => _robotModel.mapStatus;
-  ui.Image? get currentMapImage => _robotModel.currentMap.value.mapImage;
+  ui.Image? get currentMapImage => null;
 
   bool isConnected() {
     return _connectionStatusNotifier.value == RobotConnectionStatus.connected;

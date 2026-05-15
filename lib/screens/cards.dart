@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/rbot_map_management_msgs.dart';
 import 'package:shadcn_ui/shadcn_ui.dart';
 
 @Preview(name: 'RobotConnectionCard')

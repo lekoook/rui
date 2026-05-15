@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/rbot_map_management_msgs.dart';
 import 'package:rui/data/robot_model.dart';
 import 'package:rui/data/robot_view_model.dart';
 import 'package:rui/screens/app_constants.dart';
@@ -114,7 +115,7 @@ class _RobotMapsGrid extends StatefulWidget {
 }
 
 class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  final _selectedNotifier = ValueNotifier(MapInfo());
+  final _selectedNotifier = ValueNotifier(MapInfo.zero);
 
   @override
   bool get wantKeepAlive => true;
@@ -160,7 +161,7 @@ class _RobotMapsGridState extends State<_RobotMapsGrid> with SingleTickerProvide
                           child: CustomPaint(
                             // TODO: Temporary draw the same map image until we figure out how to receive image over the network.
                             size: Size(widget.mapStatusNotifier.value.currentMap.width, widget.mapStatusNotifier.value.currentMap.height),
-                            painter: MapPainter(mapImage: widget.mapStatusNotifier.value.currentMap.mapImage),
+                            painter: MapPainter(mapImage: null), // TODO: Temp.
                           ),
                         )
                       )
@@ -223,7 +224,7 @@ class _MapInfoPanelState extends State<MapInfoPanel> {
                         fit: BoxFit.contain,
                         child: CustomPaint(
                           size: Size(widget.mapInfoNotifier.value.width, widget.mapInfoNotifier.value.height),
-                          painter: MapPainter(mapImage: widget.mapInfoNotifier.value.mapImage),
+                          painter: MapPainter(mapImage: null), // TODO: Temp.
                         ),
                       )
                     ),

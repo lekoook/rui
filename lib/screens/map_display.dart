@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:rui/data/data_types.dart';
 import 'package:rui/data/geometry_msgs.dart' hide Transform;
+import 'package:rui/data/rbot_map_management_msgs.dart';
 import 'package:rui/screens/app_constants.dart';
 import 'package:rui/screens/buttons.dart';
 import 'package:rui/screens/cards.dart';
@@ -75,10 +76,12 @@ class HomeMarker extends MapMarker {
 class MapDisplay extends StatefulWidget {
   const MapDisplay({
     super.key,
+    this.mapImage,
     required this.mapData,
     required this.mapMarkers,
   });
 
+  final ui.Image? mapImage;
   final MapInfo mapData;
   final List<MapMarker> mapMarkers;
 
@@ -153,7 +156,7 @@ void _fitToScreen() {
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    _noMap = widget.mapData.mapImage == null;
+    _noMap = widget.mapImage == null;
     return LayoutBuilder(
       builder: (context, constraints) {
         return ConstrainedBox(
@@ -216,7 +219,7 @@ void _fitToScreen() {
                               children: [
                                 CustomPaint(
                                   size: Size(widget.mapData.width, widget.mapData.height),
-                                  painter: MapPainter(mapImage: widget.mapData.mapImage),
+                                  painter: MapPainter(mapImage: widget.mapImage),
                                 ),
                                 ...widget.mapMarkers.map((marker) {
                                   return ValueListenableBuilder(

@@ -5,10 +5,11 @@ import 'dart:ui' as ui;
 
 import 'errors.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:rui/data/data_types.dart';
+import 'package:rui/data/enums.dart';
 import 'package:rui/data/geometry_msgs.dart';
 import 'package:rui/data/nav_msgs.dart';
+import 'package:rui/data/rbot_map_management_msgs.dart';
 import 'package:rui/data/sensor_msgs.dart';
 import 'package:web/web.dart' as web;
 
@@ -19,8 +20,9 @@ class RobotModel {
   final _connectionStatus = ValueNotifier(RobotConnectionStatus.disconnected);
   final _batteryState = ValueNotifier(BatteryState.zero);
   final _robotPose = ValueNotifier(Pose.zero);
-  final _currentMap = ValueNotifier(MapInfo());
-  final _mapStatus = ValueNotifier(MapStatus());
+  final _currentMap = ValueNotifier(MapInfo.zero);
+  final _mapStatus = ValueNotifier(MapStatus.zero);
+  final _occupancyGrid = ValueNotifier(OccupancyGrid.zero);
 
   late final _eventsMap = {
     'battery_state' : _onBatteryState,
@@ -36,6 +38,7 @@ class RobotModel {
   ValueNotifier<Pose> get robotPose => _robotPose;
   ValueNotifier<MapInfo> get currentMap => _currentMap;
   ValueNotifier<MapStatus> get mapStatus => _mapStatus;
+  ui.Image? get mapImage => null;
 
   Future<ui.Image?> _decodeOccupancyGridToImage(OccupancyGrid grid) async {
     final width = grid.info.width;
@@ -152,17 +155,7 @@ class RobotModel {
     final str = event.data.toString();
     try {
       final decoded = jsonDecode(str);
-      final map = MapInfo.fromJson(decoded);
-      _currentMap.value = MapInfo(
-          name: map.name,
-          description: map.description,
-          home: map.home,
-          resolution: map.resolution,
-          width: map.width,
-          height: map.height,
-          origin: map.origin,
-          mapImage: _currentMap.value.mapImage
-        );
+      _currentMap.value = MapInfo.fromJson(decoded);
     } on FormatException catch (e) {
       print('current_map event invalid JSON: ${e.message}\n$str');
     } catch (e) {
@@ -187,20 +180,17 @@ class RobotModel {
     try {
       final decoded = jsonDecode(str);
       final grid = OccupancyGrid.fromJson(decoded);
-      _decodeOccupancyGridToImage(grid).then((image) {
-        if (image != null) {
-          _currentMap.value = MapInfo(
-            name: _currentMap.value.name,
-            description: _currentMap.value.description,
-            home: _currentMap.value.home,
-            resolution: grid.info.resolution,
-            width: grid.info.width.toDouble(),
-            height: grid.info.height.toDouble(),
-            origin: _currentMap.value.home,
-            mapImage: image
-          );
-        }
-      });
+      _currentMap.value = MapInfo(
+        name: _currentMap.value.name,
+        description: _currentMap.value.description,
+        home: _currentMap.value.home,
+        landmarks: _currentMap.value.landmarks,
+        waypoints: _currentMap.value.waypoints,
+        resolution: grid.info.resolution,
+        width: grid.info.width.toDouble(),
+        height: grid.info.height.toDouble(),
+        origin: _currentMap.value.home,
+      );
       print(grid);
     } on FormatException catch (e) {
       print('map_grid event invalid JSON: ${e.message}\n$str');
@@ -220,22 +210,21 @@ class RobotModel {
   }
 
   Future<MapInfo?> getCurrentMap() async {
+    // _client.getCurrentMap();
     // TODO: Temp.
-    final asset = 'test_map.png';
-    final data = await rootBundle.load(asset);
-    final bytes = data.buffer.asUint8List();
-    final codec = await ui.instantiateImageCodec(bytes);
-    final frame = await codec.getNextFrame();
-    _currentMap.value = MapInfo(
+    _currentMap.value = const MapInfo(
       name: 'test_map',
+      description: '',
+      home: Pose.zero,
+      landmarks: [],
+      waypoints: [],
       resolution: 0.05,
       width: 1350,
       height: 615,
-      origin: const Pose(
+      origin: Pose(
         position: Point(x: -45.916, y: -9.869, z: 0),
         orientation: Quaternion(x: 0, y: 0, z: 0, w: 1),
       ),
-      mapImage: frame.image
     );
     return _currentMap.value;
   }
